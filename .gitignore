@@ -1,0 +1,35 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.bin
+*.app
+/bin/*
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+lib/*
+*.lai
+*.la
+*.a
+
+# Data file
+data/*
+*.dat
+*.plt
+*.lay
+
+# Temp files
+*.cpp~
+*.hpp~
+Makefile~
+
+# Netbeans project
+nbproject/*
+
+# temp files
+*.swp
+*~

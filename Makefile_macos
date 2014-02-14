@@ -1,0 +1,47 @@
+# variables
+COMPILATEUR_C := icpc
+FLAGS_C := -g -std=c++0x -openmp 
+FLAGS_AR := cru
+
+HOME = .
+
+# folders executable and sources
+main := $(HOME)/main
+src := $(HOME)/src
+
+# objects
+src_main := $(wildcard $(main)/*.cpp)
+obj_main := $(patsubst %.cpp,%.o,$(wildcard $(main)/*.cpp))
+src_src := $(wildcard $(src)/*.cpp)
+obj_src := $(patsubst %.cpp,%.o,$(wildcard $(src)/*.cpp))
+
+# include directory
+MKLINCLUDE = $(MKLROOT)/include
+INCLUDE = -I$(HOME)/include -I$(HOME)/src -I$(MKLINCLUDE) -I$(MKLDIR)/include -I./lib/tecio/tecsrc
+
+# required external library
+LIBEXT =  ./lib/libtecio_macos.a
+          
+# standard library
+LINK_LIBS = -mkl 
+
+# Define the target directories.
+TARGETDIR=.
+
+all: dns
+
+dns: $(obj_src) $(obj_main)
+	@echo "Building main:"
+	$(COMPILATEUR_C) $(FLAGS_C) $(INCLUDE) -o $(main)/ftle.app $(obj_main) $(obj_src) $(LIBEXT) $(LINK_LIBS)
+
+# Compile all source files .cpp into .o files
+$(TARGETDIR)/%.o: $(TARGETDIR)/%.cpp
+	$(COMPILATEUR_C) $(FLAGS_C) $(INCLUDE) -c $< -o $@
+
+# Compile all source files .f into .o files
+$(TARGETDIR)/%.o: $(TARGETDIR)/%.f
+	$(COMPILATEUR_F) $(FLAGS_F) $(INCLUDE) -c $< -o $@
+
+clean:
+	cd $(main); rm -f *.o *.bin;
+	cd $(src); rm -f *.o *.a;
