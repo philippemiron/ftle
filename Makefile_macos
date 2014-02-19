@@ -1,6 +1,6 @@
 # variables
 COMPILATEUR_C := g++
-FLAGS_C := -g -std=c++0x -fopenmp 
+FLAGS_C := -g -fopenmp 
 FLAGS_AR := cru
 
 HOME = .
@@ -22,7 +22,7 @@ INCLUDE = -I./lib/tecio/tecsrc/ -I./lib/ -I./src/ -I./include/
 LIBEXT =  ./lib/libtecio_macos.a
 
 # standard library
-LINK_LIBS = -lblas -llapack
+LINK_LIBS = -framework Accelerate
 
 # Define the target directories.
 TARGETDIR=.
