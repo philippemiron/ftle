@@ -1,6 +1,6 @@
 # variables
-COMPILATEUR_C := icpc
-FLAGS_C := -g -std=c++0x -openmp 
+COMPILATEUR_C := g++
+FLAGS_C := -g -std=c++0x -fopenmp 
 FLAGS_AR := cru
 
 HOME = .
@@ -15,15 +15,14 @@ obj_main := $(patsubst %.cpp,%.o,$(wildcard $(main)/*.cpp))
 src_src := $(wildcard $(src)/*.cpp)
 obj_src := $(patsubst %.cpp,%.o,$(wildcard $(src)/*.cpp))
 
-# include directory
-MKLINCLUDE = $(MKLROOT)/include
-INCLUDE = -I$(HOME)/include -I$(HOME)/src -I$(MKLINCLUDE) -I$(MKLDIR)/include -I./lib/tecio/tecsrc
+# include directories and external libraries
+INCLUDE = -I./lib/tecio/tecsrc -I./lib -I./src -I./include
 
 # required external library
 LIBEXT =  ./lib/libtecio_linux.a
-          
+
 # standard library
-LINK_LIBS = -mkl 
+LINK_LIBS = -lblas -llapack
 
 # Define the target directories.
 TARGETDIR=.
