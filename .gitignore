@@ -5,6 +5,7 @@
 *.bin
 *.app
 /bin/*
+.ccache/*
 
 # Compiled Dynamic libraries
 *.so
