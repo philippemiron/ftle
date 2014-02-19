@@ -1,4 +1,7 @@
 #include "lyapunov.h"
+extern "C" {
+    void dsyevd_(char& jobz, char& uplo, int& n, double* a, int& lda, double* w, double* work, int& lwork, int* iwork, int& liwork, int& info);
+}
 
 lyapunov::lyapunov(parameter* objpara, flowmap* objphi)
     :	T(objpara->get_T()),
@@ -32,9 +35,9 @@ V2 = Construct4D(Nx, Ny, Nz, 3);
 V3 = Construct4D(Nx, Ny, Nz, 3);
 
 // Lapack parameters
-int n(3), lda(3), info, lwork, liwork;
-const char jobz = 'V';
-const char uplo = 'U';
+int n(2), lda(2), lwork(21), liwork(13), info(0); // iwork 5*n+3
+char jobz = 'V';
+char uplo = 'U';
 lwork = 37; //2*n*n + 6*n +1
 liwork = 18; // 5*n+3
             
@@ -55,12 +58,9 @@ for (int i(0); i<Nx; i++) {
             // Lapack parameter
             // and variable to store
             // output of function
-            int ierr(0);
-            int iwkopt;
-            int iwork[liwork];
-            double wkopt;
-            double work[lwork];
-            double w[n]; // eigen value
+	        int iwork[liwork];
+	        double work[lwork];
+	        double w[n]; // eigen value
             // Store collumn-wise!!!! this will
             // store the eigenvectors matrix
             double a[9] = {
@@ -70,8 +70,8 @@ for (int i(0); i<Nx; i++) {
             };
             
             // Solve eigenproblem
-            dsyevd("V", "U", &n, a, &lda, w, &wkopt, &lwork, iwork, &liwork, &info);
-            if (ierr != 0)
+			dsyevd_(jobz, uplo, n, a, lda, w, work, lwork, iwork, liwork, info);
+            if (info != 0)
                 cout << "Error using Lapack dsyevd function" << endl;
 
 

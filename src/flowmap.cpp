@@ -1,4 +1,8 @@
 #include "flowmap.h"
+extern "C" {
+    void dcopy_(int& n, double* x, int& incx, double* y, int& incy);
+    void daxpy_(int& n, double& alpha, double* x, int& incx, double* y, int& incy);  
+}
 
 flowmap::flowmap(parameter* objpara)
 	:     
@@ -193,9 +197,9 @@ for (int k(0); k<Npt; k++) {
     //cout << "u=" << g[0] << " v=" << g[1] << endl;
 
     // x0 += u*dt
-	daxpy(&nd, &dt, u, &incx, x0, &incx);
+	daxpy_(nd, dt, u, incx, x0, incx);
 }
-dcopy(&nd, x0, &incx, &D[0], &incx);
+dcopy_(nd, x0, incx, &D[0], incx);
 };
 
 void flowmap::int_rk5 (double T, int Npt, double T0, vector<double>& D)

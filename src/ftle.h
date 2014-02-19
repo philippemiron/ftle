@@ -15,7 +15,6 @@
 #include <algorithm>
 #include <iterator>
 #include <tecio.h>
-#include <mkl.h>
 #include <limits>
 #include "exprtk.hpp"
 
@@ -35,8 +34,6 @@
 // LES VARIABLES LOGIQUES
 #define VRAI       (1)
 #define FAUX       (0)
-
-#define INT32      (1)
 
 #endif
 
