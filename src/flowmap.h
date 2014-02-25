@@ -12,21 +12,21 @@ class flowmap
 public:
 	flowmap (parameter* objpara);
 	virtual ~flowmap(void);
-	double*** get_phi_x();
-	double*** get_phi_y();
-	double*** get_phi_z();
-	double*** get_phi_dudx();
-	double*** get_phi_dudy();
-	double*** get_phi_dudz();
-	double*** get_phi_dvdx();
-	double*** get_phi_dvdy();
-	double*** get_phi_dvdz();
-	double*** get_phi_dwdx();
-	double*** get_phi_dwdy();
-	double*** get_phi_dwdz();
-	std::vector<double> get_x();
-	std::vector<double> get_y();
-	std::vector<double> get_z();
+	double*** get_phi_x() const { return phi_x; };
+	double*** get_phi_y() const { return phi_x; };
+	double*** get_phi_z() const { return phi_x; };
+	double*** get_phi_dudx() const { return phi_dudx; };
+	double*** get_phi_dudy() const { return phi_dudy; };
+	double*** get_phi_dudz() const { return phi_dudz; };
+	double*** get_phi_dvdx() const { return phi_dvdx; };
+	double*** get_phi_dvdy() const { return phi_dvdy; };
+	double*** get_phi_dvdz() const { return phi_dvdz; };
+	double*** get_phi_dwdx() const { return phi_dwdx; };
+	double*** get_phi_dwdy() const { return phi_dwdy; };
+	double*** get_phi_dwdz() const { return phi_dwdz; };
+	std::vector<double> get_x() const { return x; };
+	std::vector<double> get_y() const { return y; };
+	std::vector<double> get_z() const { return z; };
 
 private:
 	_MthOde ode;

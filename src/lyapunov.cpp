@@ -108,39 +108,3 @@ Destruct4D(V1);
 Destruct4D(V2);
 Destruct4D(V3);
 }
-
-// Methode pour recuperer les donnees de la classe lyapunov
-double*** lyapunov::get_Lyapunov(void)
-{
-   return ftle;
-};
-
-double*** lyapunov::get_Eig1(void)
-{
-   return eig1;
-};
-
-double*** lyapunov::get_Eig2(void)
-{
-   return eig2;
-};
-
-double*** lyapunov::get_Eig3(void)
-{
-   return eig3;
-};
-
-double**** lyapunov::get_V1(void)
-{
-   return V1;
-};
-
-double**** lyapunov::get_V2(void)
-{
-   return V2;
-};
-
-double**** lyapunov::get_V3(void)
-{
-   return V3;
-};

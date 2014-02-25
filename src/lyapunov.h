@@ -12,13 +12,13 @@ class lyapunov
 public:
 	lyapunov (parameter* objpara, flowmap* objphi);
 	virtual ~lyapunov(void);
-	double***  get_Lyapunov();
-	double***  get_Eig1();
-	double***  get_Eig2();
-	double***  get_Eig3();
-	double**** get_V1();
-	double**** get_V2();
-	double**** get_V3();
+	double***  get_Lyapunov() const { return ftle; };
+	double***  get_Eig1() const { return eig1; };
+	double***  get_Eig2() const { return eig2; };
+	double***  get_Eig3() const { return eig3; };
+	double**** get_V1() const { return V1; };
+	double**** get_V2() const { return V2; };
+	double**** get_V3() const { return V3; };
 	
 private:
         void Ecrire_Tecplot(const char* fichier);
