@@ -18,22 +18,5 @@
 #include <limits>
 #include "exprtk.hpp"
 
-// LES MACROS LES PLUS UTILES
-#ifndef signe
-#define signe(a)   ( ((a)>=0.0) ? (1.0) : (-1.0) )
-#endif
-
-#ifndef max
-#define max(a,b)   ( ((a)>(b)) ? (a) : (b) )
-#endif
-
-#ifndef min
-#define min(a,b)   ( ((a)>(b)) ? (b) : (a) )
-#endif
-
-// LES VARIABLES LOGIQUES
-#define VRAI       (1)
-#define FAUX       (0)
-
 #endif
 
