@@ -10,7 +10,6 @@ class writedata
 {
 public:
    writedata(parameter* objpara, flowmap* objfm, lyapunov* objftle);
-   virtual ~writedata(void);
 
 private:
     void write_ftle(std::string file);

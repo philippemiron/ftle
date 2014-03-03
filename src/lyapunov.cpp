@@ -4,35 +4,35 @@ extern "C" {
 }
 
 lyapunov::lyapunov(parameter* objpara, flowmap* objphi)
-    :	T(objpara->get_T()),
-        Nx(objpara->get_Nx()),
-        Ny(objpara->get_Ny()),
-        Nz(objpara->get_Nz()),
-        phi_x(objphi->get_phi_x()),
-        phi_y(objphi->get_phi_y()),
-        phi_z(objphi->get_phi_z()),
-        phi_dudx(objphi->get_phi_dudx()),
-        phi_dudy(objphi->get_phi_dudy()),
-        phi_dudz(objphi->get_phi_dudz()),
-        phi_dvdx(objphi->get_phi_dvdx()),
-        phi_dvdy(objphi->get_phi_dvdy()),
-        phi_dvdz(objphi->get_phi_dvdz()),
-        phi_dwdx(objphi->get_phi_dwdx()),
-        phi_dwdy(objphi->get_phi_dwdy()),
-        phi_dwdz(objphi->get_phi_dwdz())
+    :	t(objpara->t()),
+        nx(objpara->nx()),
+        ny(objpara->ny()),
+        nz(objpara->nz()),
+        phi_x(objphi->phi_x()),
+        phi_y(objphi->phi_y()),
+        phi_z(objphi->phi_z()),
+        phi_dudx(objphi->phi_dudx()),
+        phi_dudy(objphi->phi_dudy()),
+        phi_dudz(objphi->phi_dudz()),
+        phi_dvdx(objphi->phi_dvdx()),
+        phi_dvdy(objphi->phi_dvdy()),
+        phi_dvdz(objphi->phi_dvdz()),
+        phi_dwdx(objphi->phi_dwdx()),
+        phi_dwdy(objphi->phi_dwdy()),
+        phi_dwdz(objphi->phi_dwdz())
 
 {
 cout << "Calculating FTLE" << endl;
 // Valeur propre du tenseur
 
-ftle = Construct3D(Nx, Ny, Nz);
-eig1 = Construct3D(Nx, Ny, Nz);
-eig2 = Construct3D(Nx, Ny, Nz);
-eig3 = Construct3D(Nx, Ny, Nz);
+ftle_ = Construct3D(nx, ny, nz);
+eig1_ = Construct3D(nx, ny, nz);
+eig2_ = Construct3D(nx, ny, nz);
+eig3_ = Construct3D(nx, ny, nz);
 
-V1 = Construct4D(Nx, Ny, Nz, 3);
-V2 = Construct4D(Nx, Ny, Nz, 3);
-V3 = Construct4D(Nx, Ny, Nz, 3);
+v1_ = Construct4D(nx, ny, nz, 3);
+v2_ = Construct4D(nx, ny, nz, 3);
+v3_ = Construct4D(nx, ny, nz, 3);
 
 // Lapack parameters
 int n(2), lda(2), lwork(21), liwork(13), info(0); // iwork 5*n+3
@@ -42,9 +42,9 @@ lwork = 37; //2*n*n + 6*n +1
 liwork = 18; // 5*n+3
             
 // Calcul des coefficients du tenseur pour tous les noeuds du champ
-for (int i(0); i<Nx; i++) {
-    for (int j(0); j<Ny; j++) {
-        for (int k(0); k<Nz; k++) {
+for (int i(0); i<nx; i++) {
+    for (int j(0); j<ny; j++) {
+        for (int k(0); k<nz; k++) {
             //  D1  D2  D3
             //  D2  D4  D5
             //  D3  D5  D6
@@ -76,20 +76,20 @@ for (int i(0); i<Nx; i++) {
 
 
             for (int m(0); m<n; m++) {
-                V1[i][j][k][m] = a[m];
-                V2[i][j][k][m] = a[n+m];
-                V3[i][j][k][m] = a[2*n+m];
+                v1_[i][j][k][m] = a[m];
+                v2_[i][j][k][m] = a[n+m];
+                v3_[i][j][k][m] = a[2*n+m];
             }
 
-            eig1[i][j][k] = w[0];
-            eig2[i][j][k] = w[1];
-            eig3[i][j][k] = w[2];
+            eig1_[i][j][k] = w[0];
+            eig2_[i][j][k] = w[1];
+            eig3_[i][j][k] = w[2];
             
             // Lyapunov
-            if (w[2] > std::numeric_limits<double>::epsilon())
-                ftle[i][j][k]  = log(w[2])/2.0/fabs(T);
+            if (w[2] > numeric_limits<double>::epsilon())
+                ftle_[i][j][k]  = log(w[2])/2.0/fabs(t);
             else
-                ftle[i][j][k] = 0;
+                ftle_[i][j][k] = 0;
             
         }
     }
@@ -99,12 +99,12 @@ for (int i(0); i<Nx; i++) {
 
 lyapunov::~lyapunov(void)
 {
-Destruct3D(ftle);
-Destruct3D(eig1);
-Destruct3D(eig2);
-Destruct3D(eig3);
+Destruct3D(ftle_);
+Destruct3D(eig1_);
+Destruct3D(eig2_);
+Destruct3D(eig3_);
 
-Destruct4D(V1);
-Destruct4D(V2);
-Destruct4D(V3);
+Destruct4D(v1_);
+Destruct4D(v2_);
+Destruct4D(v3_);
 }

@@ -4,65 +4,66 @@
 #include "ftle.h"
 #include "enum.h"
 
+using namespace std;
+
 class parameter
 {
 public:
     parameter(const char* fichier);
-    virtual ~parameter(void);
-    double	get_T() const { return T; };
-    int	get_Npt() const { return Npt; };
-    int	get_T0() const { return T0; };
-    int	get_Nx() const { return Nx; };
-    int	get_Ny() const { return Ny; };
-    int	get_Nz() const { return Nz; };
-    _MthOde  get_MthOde() const { return MthOde; };
-    double  getXmin() const { return xmin; };
-    double  getXmax() const { return xmax; };
-    double  getYmin() const { return ymin; };
-    double  getYmax() const { return ymax; };
-    double  getZmin() const { return zmin; };
-    double  getZmax() const { return zmax; };    
-    std::string	getOutput_File_CG() const { return output_file_cg; };
-    std::string	getFunctionU() const { return fu; };
-    std::string	getFunctionV() const { return fv; };
-    std::string	getFunctionW() const { return fw; };  
-    std::string	getFunctionDudx() const { return fdudx; };
-    std::string	getFunctionDudy() const { return fdudy; };
-    std::string	getFunctionDudz() const { return fdudz; };  
-    std::string	getFunctionDvdx() const { return fdvdx; };
-    std::string	getFunctionDvdy() const { return fdvdy; };
-    std::string	getFunctionDvdz() const { return fdvdz; };  
-    std::string	getFunctionDwdx() const { return fdwdx; };
-    std::string	getFunctionDwdy() const { return fdwdy; };
-    std::string	getFunctionDwdz() const { return fdwdz; };  
+    double	t() const { return t_; };
+    int	npt() const { return npt_; };
+    int	t0() const { return t0_; };
+    int	nx() const { return nx_; };
+    int	ny() const { return ny_; };
+    int	nz() const { return nz_; };
+    _MthOde mthode() const { return mthode_; };
+    double  xmin() const { return xmin_; };
+    double  xmax() const { return xmax_; };
+    double  ymin() const { return ymin_; };
+    double  ymax() const { return ymax_; };
+    double  zmin() const { return zmin_; };
+    double  zmax() const { return zmax_; };    
+    std::string	filecg() const { return filecg_; };
+    std::string	fu() const { return fu_; };
+    std::string	fv() const { return fv_; };
+    std::string	fw() const { return fw_; };  
+    std::string	fdudx() const { return fdudx_; };
+    std::string	fdudy() const { return fdudy_; };
+    std::string	fdudz() const { return fdudz_; };  
+    std::string	fdvdx() const { return fdvdx_; };
+    std::string	fdvdy() const { return fdvdy_; };
+    std::string	fdvdz() const { return fdvdz_; };  
+    std::string	fdwdx() const { return fdwdx_; };
+    std::string	fdwdy() const { return fdwdy_; };
+    std::string	fdwdz() const { return fdwdz_; };  
 
 private:
-    double  T;
-    int   Npt;
-    int   T0;
-    int   Nx;
-    int   Ny;
-    int   Nz;
-    double xmin;
-	double xmax;
-	double ymin;
-	double ymax;
-	double zmin;
-	double zmax;
-    _MthOde  MthOde;
-    char fichier_piv[80];
-    std::string output_file_cg;
-    std::string fu;
-    std::string fv;
-    std::string fw;
-    std::string fdudx;
-    std::string fdudy;
-    std::string fdudz;
-    std::string fdvdx;
-    std::string fdvdy;
-    std::string fdvdz;
-    std::string fdwdx;
-    std::string fdwdy;
-    std::string fdwdz;
+    double  t_;
+    int   npt_;
+    int   t0_;
+    int   nx_;
+    int   ny_;
+    int   nz_;
+    double xmin_;
+	double xmax_;
+	double ymin_;
+	double ymax_;
+	double zmin_;
+	double zmax_;
+    _MthOde  mthode_;
+    std::string filecg_;
+    std::string fu_;
+    std::string fv_;
+    std::string fw_;
+    std::string fdudx_;
+    std::string fdudy_;
+    std::string fdudz_;
+    std::string fdvdx_;
+    std::string fdvdy_;
+    std::string fdvdz_;
+    std::string fdwdx_;
+    std::string fdwdy_;
+    std::string fdwdz_;
+
 };
 #endif

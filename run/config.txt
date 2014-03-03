@@ -1,11 +1,7 @@
 #_fichier_de_configuration
+T0      0
 T       10
 Npt     100
-T0      0
-
-#_frames_pour_le_calcul_du_champs_de_Lyapunov
-
-
 
 #_parameter_
 MthOde  Euler
@@ -14,9 +10,9 @@ MthOde  Euler
 Nx      1000
 Ny      1000
 Nz      3
-xmin    0  
+xmin    0.0  
 xmax    2.0
-ymin    0
+ymin    0.0
 ymax    1.0
 zmin    -0.1
 zmax    0.1
@@ -37,5 +33,7 @@ function_dvdz   0.0
 function_dwdx   0.0
 function_dwdy   0.0
 function_dwdz   0.0
+
+
 	
 End

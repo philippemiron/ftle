@@ -12,34 +12,33 @@ class lyapunov
 public:
 	lyapunov (parameter* objpara, flowmap* objphi);
 	virtual ~lyapunov(void);
-	double***  get_Lyapunov() const { return ftle; };
-	double***  get_Eig1() const { return eig1; };
-	double***  get_Eig2() const { return eig2; };
-	double***  get_Eig3() const { return eig3; };
-	double**** get_V1() const { return V1; };
-	double**** get_V2() const { return V2; };
-	double**** get_V3() const { return V3; };
+	double***  ftle() const { return ftle_; };
+	double***  eig1() const { return eig1_; };
+	double***  eig2() const { return eig2_; };
+	double***  eig3() const { return eig3_; };
+	double**** v1() const { return v1_; };
+	double**** v2() const { return v2_; };
+	double**** v3() const { return v3_; };
 	
 private:
         void Ecrire_Tecplot(const char* fichier);
         void Ecrire_Tecplot_Hessian(const char* fichier);
         void Ecrire_Tecplot_Binary(const char* fichier);
         FILE* fp;
-        double T;
+        double t;
         int nnode;
         int nbelm;
-        int NbChamps;
-        int Nx;
-        int Ny;
-        int Nz;
-        double   XMin;
-        double   XMax;
-        double   YMax;
-        double   YMin;
-        double   ZMax;
-        double   ZMin;
-        double* coo;
-        int* cnc;
+        int nx;
+        int ny;
+        int nz;
+        double   xmin;
+        double   xmax;
+        double   ymax;
+        double   ymin;
+        double   zmax;
+        double   zmin;
+        double*  coo;
+        int* 	 cnc;
         double*** phi_x;
         double*** phi_y;
         double*** phi_z;
@@ -52,13 +51,13 @@ private:
         double*** phi_dwdx;
         double*** phi_dwdy;
         double*** phi_dwdz;
-        double*** ftle;
-        double*** eig1;
-        double*** eig2;
-        double*** eig3;
-        double**** V1;
-        double**** V2;
-        double**** V3;
+        double*** ftle_;
+        double*** eig1_;
+        double*** eig2_;
+        double*** eig3_;
+        double**** v1_;
+        double**** v2_;
+        double**** v3_;
 };
 
 #endif

@@ -1,18 +1,15 @@
 #include "writedata.h"
 
 writedata::writedata(parameter* objpara, flowmap* objfm, lyapunov* objftle):
-    nx(objpara->get_Nx()),
-	ny(objpara->get_Ny()),
-	nz(objpara->get_Nz()),
-	x(objfm->get_x()),
-	y(objfm->get_y()),
-	z(objfm->get_z()),
-	ftle(objftle->get_Lyapunov())
+    nx(objpara->nx()),
+	ny(objpara->ny()),
+	nz(objpara->nz()),
+	x(objfm->x()),
+	y(objfm->y()),
+	z(objfm->z()),
+	ftle(objftle->ftle())
 {
 	write_ftle("ftle.dat"); 
-};
-writedata::~writedata(void)
-{
 };
 
 void writedata::write_ftle(std::string file) 
