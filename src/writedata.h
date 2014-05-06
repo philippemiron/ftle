@@ -12,8 +12,8 @@ public:
    writedata(parameter* objpara, flowmap* objfm, lyapunov* objftle);
 
 private:
-    void write_ftle(std::string file);
-    int nx;
+  void write_ftle(std::string file);
+  int nx;
 	int ny;	
 	int nz;
 	std::vector<double> x;

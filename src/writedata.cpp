@@ -1,7 +1,7 @@
 #include "writedata.h"
 
 writedata::writedata(parameter* objpara, flowmap* objfm, lyapunov* objftle):
-    nx(objpara->nx()),
+  nx(objpara->nx()),
 	ny(objpara->ny()),
 	nz(objpara->nz()),
 	x(objfm->x()),
@@ -27,7 +27,7 @@ if (myfile.is_open())
     for(int k(0); k<nz; k++) {
         for(int j(0); j<ny; j++) {
             for(int i(0); i<nx; i++) {
-                myfile << x[i] << " " << y[j] << " " << z[k] << ftle[k][j][i] << std::endl;
+                myfile << x[i] << " " << y[j] << " " << z[k] << " " << ftle[i][j][k] << std::endl;
             }
         }
     }
