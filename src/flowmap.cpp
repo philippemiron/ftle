@@ -160,23 +160,22 @@ double dt = t/(npt-1);
 
 for (int k(0); k<npt; k++) {
     
-    // velocity interpolation
-    double t  = t0 + k*dt;
+  // velocity interpolation
+  double t  = t0 + k*dt;
     
-    interpolation(t,x0,u);
-    //cout << "x=" << x0[0] << " y=" << x0[1] << endl;
-    //cout << "u=" << g[0] << " v=" << g[1] << endl;
+  interpolation(t,x0,u);
+  //cout << "x=" << x0[0] << " y=" << x0[1] << endl;
+  //cout << "u=" << g[0] << " v=" << g[1] << endl;
 
-    // x0 += u*dt
+  // x0 += u*dt
 	daxpy_(nd, dt, u, incx, x0, incx);
 }
 dcopy_(nd, x0, incx, &d[0], incx);
-
 };
 
 void flowmap::int_rk5 (double t, int npt, double t0, vector<double>& d)
 {
-int  nd = 30;
+int  nd = 12;
 double g[nd];
 
 double k1[nd];

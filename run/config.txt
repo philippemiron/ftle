@@ -1,6 +1,6 @@
 #_fichier_de_configuration
 T0      0
-T       10
+T       -10
 Npt     100
 
 #_parameter_

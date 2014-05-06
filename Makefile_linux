@@ -1,6 +1,6 @@
 # variables
 COMPILATEUR_C := g++
-FLAGS_C := -g -fopenmp -std=c++0x 
+FLAGS_C := -O3 -fopenmp -std=c++0x 
 FLAGS_AR := cru
 
 HOME = .
@@ -10,9 +10,7 @@ main := $(HOME)/main
 src := $(HOME)/src
 
 # objects
-src_main := $(wildcard $(main)/*.cpp)
 obj_main := $(patsubst %.cpp,%.o,$(wildcard $(main)/*.cpp))
-src_src := $(wildcard $(src)/*.cpp)
 obj_src := $(patsubst %.cpp,%.o,$(wildcard $(src)/*.cpp))
 
 # include directories and external libraries
@@ -34,11 +32,15 @@ dns: $(obj_src) $(obj_main)
 	$(COMPILATEUR_C) $(FLAGS_C) $(INCLUDE) -o $(main)/ftle.bin $(obj_main) $(obj_src) $(LIBEXT) $(LINK_LIBS)
 
 # Compile all source files .cpp into .o files
+$(TARGETDIR)/%.o: $(TARGETDIR)/%.cpp $(TARGETDIR)/%.h
+	$(COMPILATEUR_C) $(FLAGS_C) $(INCLUDE) -c $< -o $@
+  
+# Compile all source files .cpp into .o files
 $(TARGETDIR)/%.o: $(TARGETDIR)/%.cpp
 	$(COMPILATEUR_C) $(FLAGS_C) $(INCLUDE) -c $< -o $@
 
 # Compile all source files .f into .o files
-$(TARGETDIR)/%.o: $(TARGETDIR)/%.f
+$(TARGETDIR)/%.o: $(TARGETDIR)/%.f $(TARGETDIR)/%.h
 	$(COMPILATEUR_F) $(FLAGS_F) $(INCLUDE) -c $< -o $@
 
 clean:
