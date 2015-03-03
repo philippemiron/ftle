@@ -40,10 +40,6 @@ $(TARGETDIR)/%.o: $(TARGETDIR)/%.cpp
 $(TARGETDIR)/%.o: $(TARGETDIR)/%.cpp $(TARGETDIR)/%.h
 	$(COMPILATEUR_C) $(FLAGS_C) $(INCLUDE) -c $< -o $@
 
-# Compile all source files .f into .o files
-$(TARGETDIR)/%.o: $(TARGETDIR)/%.f $(TARGETDIR)/%.h
-	$(COMPILATEUR_F) $(FLAGS_F) $(INCLUDE) -c $< -o $@
-
 clean:
 	cd $(main); rm -f *.o *.bin;
 	cd $(src); rm -f *.o *.a;
