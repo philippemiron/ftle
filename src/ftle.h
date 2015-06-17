@@ -17,6 +17,7 @@
 #include <tecio.h>
 #include <limits>
 #include "exprtk.hpp"
+#include <memory>
 
 #endif
 

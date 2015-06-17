@@ -1,6 +1,6 @@
 # variables
 COMPILATEUR_C := g++
-FLAGS_C := -O3 -fopenmp -std=c++0x 
+FLAGS_C := -O3 -std=c++11 -fopenmp
 FLAGS_AR := cru
 
 HOME = .

@@ -1,6 +1,6 @@
 # variables
 COMPILATEUR_C := g++
-FLAGS_C := -O3 -fopenmp 
+FLAGS_C := -O3 -std=c++11 -fopenmp
 FLAGS_AR := cru
 
 HOME = .
@@ -12,7 +12,6 @@ src := $(HOME)/src
 # objects
 obj_main := $(patsubst %.cpp,%.o,$(wildcard $(main)/*.cpp))
 obj_src := $(patsubst %.cpp,%.o,$(wildcard $(src)/*.cpp))
-
 
 # include directories and external libraries
 INCLUDE = -I./lib/tecio/tecsrc/ -I./lib/ -I./src/ -I./include/

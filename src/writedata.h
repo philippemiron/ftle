@@ -6,19 +6,20 @@
 #include "flowmap.h"
 #include "lyapunov.h"
 
+using namespace std;
+
 class writedata
 {
 public:
-   writedata(parameter* objpara, flowmap* objfm, lyapunov* objftle);
-
+   writedata(shared_ptr<parameter>& objpara, shared_ptr<flowmap>& objfm, shared_ptr<lyapunov>& objftle);
 private:
   void write_ftle(std::string file);
   int nx;
 	int ny;	
 	int nz;
-	std::vector<double> x;
-	std::vector<double> y;
-	std::vector<double> z;
+	vector<double> x;
+	vector<double> y;
+	vector<double> z;
 	double*** ftle;
 };
 

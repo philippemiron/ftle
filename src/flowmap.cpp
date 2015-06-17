@@ -5,33 +5,32 @@ extern "C" {
     void daxpy_(int& n, double& alpha, double* x, int& incx, double* y, int& incy);  
 }
 
-flowmap::flowmap(parameter* objpara)
-	:     
-    nx(objpara->nx()),
-    ny(objpara->ny()),
-    nz(objpara->nz()),
-    xmin(objpara->xmin()),
-    xmax(objpara->xmax()),
-    ymin(objpara->ymin()),
-    ymax(objpara->ymax()),
-    zmin(objpara->zmin()),
-    zmax(objpara->zmax()),
-    t(objpara->t()),
-    t0(objpara->t0()),
-    npt(objpara->npt()),
-    ode(objpara->mthode()),
-    function_u(objpara->fu()),
-    function_v(objpara->fv()),
-    function_w(objpara->fw()),
-    function_dudx(objpara->fdudx()),
-    function_dudy(objpara->fdudy()),
-    function_dudz(objpara->fdudz()),
-    function_dvdx(objpara->fdvdx()),
-    function_dvdy(objpara->fdvdy()),
-    function_dvdz(objpara->fdvdz()),
-    function_dwdx(objpara->fdwdx()),
-    function_dwdy(objpara->fdwdy()),
-    function_dwdz(objpara->fdwdz())	        
+flowmap::flowmap(shared_ptr<parameter>& objpara):     
+  nx(objpara->nx()),
+  ny(objpara->ny()),
+  nz(objpara->nz()),
+  xmin(objpara->xmin()),
+  xmax(objpara->xmax()),
+  ymin(objpara->ymin()),
+  ymax(objpara->ymax()),
+  zmin(objpara->zmin()),
+  zmax(objpara->zmax()),
+  t(objpara->t()),
+  t0(objpara->t0()),
+  npt(objpara->npt()),
+  ode(objpara->mthode()),
+  function_u(objpara->fu()),
+  function_v(objpara->fv()),
+  function_w(objpara->fw()),
+  function_dudx(objpara->fdudx()),
+  function_dudy(objpara->fdudy()),
+  function_dudz(objpara->fdudz()),
+  function_dvdx(objpara->fdvdx()),
+  function_dvdy(objpara->fdvdy()),
+  function_dvdz(objpara->fdvdz()),
+  function_dwdx(objpara->fdwdx()),
+  function_dwdy(objpara->fdwdy()),
+  function_dwdz(objpara->fdwdz())
 {
 
 cout << "Flow map integrations (T=" << t << "s) for the " << nx*ny*nz << " particles." << endl;
@@ -49,14 +48,10 @@ switch(ode)
 				cout << "	Using euler integration by default" << endl;
 				break;
 } 
-
-// choix du right hand side choisi lors du calcul des déplacements
 cout << "	Using analytical equation" << endl;	
+int number_of_threads = omp_get_max_threads();
 
 // Setting up the expression evaluation
-
-// Create a function with theses expressions
-int number_of_threads = omp_get_max_threads();
 initialize_expression(number_of_threads);
 
 // Formation des matrices de deplacements.
@@ -95,7 +90,7 @@ phi_dwdz_ = Construct3D(nx, ny, nz);
 // 2- Trouver les coordonnees du noeud courant
 // 3- Calculer le delacement Lagrangien du noeud  
 //    a l'aide des vitesses mesurees par PIV
-#pragma omp parallel for
+//#pragma omp parallel for
 for (int i=0; i<nx;i++) {
     for (int j=0; j<ny; j++) { 
         for (int k=0; k<nz; k++) {
@@ -227,32 +222,32 @@ for(int k=0; k<npt-1; k++) {
 	// ==============================================
 	interpolation(t1,y2,g); 
 	for(int i=0; i<nd; i++) {
-		 k2[i] = g[i]*dt;
-		 y3[i] = y1[i] + (k1[i]+k2[i])/8.0;
+    k2[i] = g[i]*dt;
+    y3[i] = y1[i] + (k1[i]+k2[i])/8.0;
 	}
 	// ==============================================
 	interpolation(t1,y3,g); 
 	for(int i=0; i<nd; i++) {
-		 k3[i] = g[i]*dt;
-		 y4[i] = y1[i] - k2[i]/2.0 + k3[i];
+    k3[i] = g[i]*dt;
+    y4[i] = y1[i] - k2[i]/2.0 + k3[i];
 	}
 	// ==============================================
 	interpolation(t2,y4,g); 
 	for(int i=0; i<nd; i++) {
-		 k4[i] = g[i]*dt;
-		 y5[i] = y1[i] + (3.0*k1[i] + 9.0*k4[i])/16.0;
+    k4[i] = g[i]*dt;
+    y5[i] = y1[i] + (3.0*k1[i] + 9.0*k4[i])/16.0;
 	}
 	// ==============================================
 	interpolation(t3,y5,g); 
 	for(int i=0; i<nd; i++) {
-		 k5[i] = g[i]*dt;
-		 y6[i] = y1[i] + (-3.0*k1[i] + 2.0*k2[i] + 12.0*k3[i] - 12.0*k4[i] + 8.0*k5[i])/7.0;
+    k5[i] = g[i]*dt;
+    y6[i] = y1[i] + (-3.0*k1[i] + 2.0*k2[i] + 12.0*k3[i] - 12.0*k4[i] + 8.0*k5[i])/7.0;
 	}
 	// ==============================================
 	interpolation(t4,y6,g); 
 	for(int i=0; i<nd; i++) {
-		 k6[i] = g[i]*dt;
-		 y6[i] = y1[i] + (7.0*k1[i] + 32.0*k3[i] + 12.0*k4[i] + 32.0*k5[i] + 7.0*k6[i])/90.0;
+    k6[i] = g[i]*dt;
+    y6[i] = y1[i] + (7.0*k1[i] + 32.0*k3[i] + 12.0*k4[i] + 32.0*k5[i] + 7.0*k6[i])/90.0;
 	}
 	for(int i=0;i<nd;i++) y1[i]=y6[i];
 }
@@ -261,117 +256,115 @@ for(int i=0;i<nd;i++) d[i]=y1[i];
 
 void flowmap::interpolation (double t, double* y, double* g)
 {
-    //cout << "x:" << y[0] << " y: " << y[1] << endl;
-    double f[12];
-    
-    // TODO
-    // one variable and one expression
-    // for every thread
-    int tid = omp_get_thread_num();
-    var_x[tid] = y[0];
-    var_y[tid] = y[1];
-    var_z[tid] = y[2];
-    var_t[tid] = t;
- 
-    // Solution analytique des vitesses et des dérivées
-    // u,v,w
-    f[0] = exp_u[tid].value();
-    f[1] = exp_v[tid].value();
-    f[2] = exp_w[tid].value();
+  //cout << "x:" << y[0] << " y: " << y[1] << endl;
+  double f[12];
 
-    // dudx dudy, dudz
-    f[3] = exp_dudx[tid].value();
-    f[4] = exp_dudy[tid].value();
-    f[5] = exp_dudz[tid].value();
+  // TODO
+  // one variable and one expression
+  // for every thread
+  int tid = omp_get_thread_num();
+  var_x[tid] = y[0];
+  var_y[tid] = y[1];
+  var_z[tid] = y[2];
+  var_t[tid] = t;
 
-    // dvdx dvdy, dvdz
-    f[6] = exp_dvdx[tid].value();
-    f[7] = exp_dvdy[tid].value();
-    f[8] = exp_dvdz[tid].value();
+  // Solution analytique des vitesses et des dérivées
+  // u,v,w
+  f[0] = exp_u[tid].value();
+  f[1] = exp_v[tid].value();
+  f[2] = exp_w[tid].value();
 
-    // dwdx dwdy, dwdz
-    f[9] =  exp_dwdx[tid].value();
-    f[10] = exp_dwdy[tid].value();
-    f[11] = exp_dwdz[tid].value();
-	
-    // Vecteur pour le calcul du deplacement
-    g[0] = f[0];
-    g[1] = f[1];
-    g[2] = f[2];
+  // dudx dudy, dudz
+  f[3] = exp_dudx[tid].value();
+  f[4] = exp_dudy[tid].value();
+  f[5] = exp_dudz[tid].value();
 
-    // Derivees premieres
-    g[3] = f[3]*y[3] + f[4]*y[6] + f[5]*y[9];
-    g[4] = f[3]*y[4] + f[4]*y[7] + f[5]*y[10];
-    g[5] = f[3]*y[5] + f[4]*y[8] + f[5]*y[11];
-    g[6] = f[6]*y[3] + f[7]*y[6] + f[8]*y[9];
-    g[7] = f[6]*y[4] + f[7]*y[7] + f[8]*y[10];
-    g[8] = f[6]*y[5] + f[7]*y[8] + f[8]*y[11];
-    g[9] = f[9]*y[3] + f[10]*y[6]+ f[11]*y[9];
-    g[10] = f[9]*y[4] + f[10]*y[7] + f[11]*y[10];
-    g[11] = f[9]*y[5] + f[10]*y[8] + f[11]*y[11];
+  // dvdx dvdy, dvdz
+  f[6] = exp_dvdx[tid].value();
+  f[7] = exp_dvdy[tid].value();
+  f[8] = exp_dvdz[tid].value();
 
-    //cout << "phi:" << f[0] << " " << f[1] << " " << f[2] << " " << f[3] << " " << f[4] << " " << f[5] << endl;
+  // dwdx dwdy, dwdz
+  f[9] =  exp_dwdx[tid].value();
+  f[10] = exp_dwdy[tid].value();
+  f[11] = exp_dwdz[tid].value();
+
+  // Vecteur pour le calcul du deplacement
+  g[0] = f[0];
+  g[1] = f[1];
+  g[2] = f[2];
+
+  // Derivees premieres
+  g[3] = f[3]*y[3] + f[4]*y[6] + f[5]*y[9];
+  g[4] = f[3]*y[4] + f[4]*y[7] + f[5]*y[10];
+  g[5] = f[3]*y[5] + f[4]*y[8] + f[5]*y[11];
+  g[6] = f[6]*y[3] + f[7]*y[6] + f[8]*y[9];
+  g[7] = f[6]*y[4] + f[7]*y[7] + f[8]*y[10];
+  g[8] = f[6]*y[5] + f[7]*y[8] + f[8]*y[11];
+  g[9] = f[9]*y[3] + f[10]*y[6]+ f[11]*y[9];
+  g[10] = f[9]*y[4] + f[10]*y[7] + f[11]*y[10];
+  g[11] = f[9]*y[5] + f[10]*y[8] + f[11]*y[11];
 }
 
 void flowmap::initialize_expression(int number_of_threads) {
     
-    // one expression per threads
-    exp_u = new exprtk::expression<double>[number_of_threads];
-    exp_v = new exprtk::expression<double>[number_of_threads];
-    exp_w = new exprtk::expression<double>[number_of_threads];
-    exp_dudx = new exprtk::expression<double>[number_of_threads];
-    exp_dudy = new exprtk::expression<double>[number_of_threads];
-    exp_dudz = new exprtk::expression<double>[number_of_threads];
-    exp_dvdx = new exprtk::expression<double>[number_of_threads];
-    exp_dvdy = new exprtk::expression<double>[number_of_threads];
-    exp_dvdz = new exprtk::expression<double>[number_of_threads];
-    exp_dwdx = new exprtk::expression<double>[number_of_threads];
-    exp_dwdy = new exprtk::expression<double>[number_of_threads];
-    exp_dwdz = new exprtk::expression<double>[number_of_threads];
-    
-    // one variable per threads
-    var_x.resize(number_of_threads, 0.0);
-    var_y.resize(number_of_threads, 0.0);
-    var_z.resize(number_of_threads, 0.0);
-    var_t.resize(number_of_threads, 0.0);
+  // one expression per threads
+  exp_u = new exprtk::expression<double>[number_of_threads];
+  exp_v = new exprtk::expression<double>[number_of_threads];
+  exp_w = new exprtk::expression<double>[number_of_threads];
+  exp_dudx = new exprtk::expression<double>[number_of_threads];
+  exp_dudy = new exprtk::expression<double>[number_of_threads];
+  exp_dudz = new exprtk::expression<double>[number_of_threads];
+  exp_dvdx = new exprtk::expression<double>[number_of_threads];
+  exp_dvdy = new exprtk::expression<double>[number_of_threads];
+  exp_dvdz = new exprtk::expression<double>[number_of_threads];
+  exp_dwdx = new exprtk::expression<double>[number_of_threads];
+  exp_dwdy = new exprtk::expression<double>[number_of_threads];
+  exp_dwdz = new exprtk::expression<double>[number_of_threads];
 
-    // initialization of all parameters
-    for (int i(0); i<number_of_threads; i++) {
-        exprtk::symbol_table<double> symbol_table;
-        symbol_table.add_variable("x", var_x[i]);
-        symbol_table.add_variable("y", var_y[i]);
-        symbol_table.add_variable("z", var_z[i]);
-        symbol_table.add_variable("t", var_t[i]);
-        symbol_table.add_constants();
+  // one variable per threads
+  var_x.resize(number_of_threads, 0.0);
+  var_y.resize(number_of_threads, 0.0);
+  var_z.resize(number_of_threads, 0.0);
+  var_t.resize(number_of_threads, 0.0);
 
-        exp_u[i].register_symbol_table(symbol_table);
-        exp_v[i].register_symbol_table(symbol_table);    
-        exp_w[i].register_symbol_table(symbol_table);
-        exp_dudx[i].register_symbol_table(symbol_table);
-        exp_dudy[i].register_symbol_table(symbol_table);
-        exp_dudz[i].register_symbol_table(symbol_table);
-        exp_dvdx[i].register_symbol_table(symbol_table);
-        exp_dvdy[i].register_symbol_table(symbol_table);
-        exp_dvdz[i].register_symbol_table(symbol_table);
-        exp_dwdx[i].register_symbol_table(symbol_table);
-        exp_dwdy[i].register_symbol_table(symbol_table);
-        exp_dwdz[i].register_symbol_table(symbol_table);
+  // initialization of all parameters
+  for (int i(0); i<number_of_threads; i++) {
+    exprtk::symbol_table<double> symbol_table;
+    symbol_table.add_variable("x", var_x[i]);
+    symbol_table.add_variable("y", var_y[i]);
+    symbol_table.add_variable("z", var_z[i]);
+    symbol_table.add_variable("t", var_t[i]);
+    symbol_table.add_constants();
 
-        exprtk::parser<double> parser;
+    exp_u[i].register_symbol_table(symbol_table);
+    exp_v[i].register_symbol_table(symbol_table);    
+    exp_w[i].register_symbol_table(symbol_table);
+    exp_dudx[i].register_symbol_table(symbol_table);
+    exp_dudy[i].register_symbol_table(symbol_table);
+    exp_dudz[i].register_symbol_table(symbol_table);
+    exp_dvdx[i].register_symbol_table(symbol_table);
+    exp_dvdy[i].register_symbol_table(symbol_table);
+    exp_dvdz[i].register_symbol_table(symbol_table);
+    exp_dwdx[i].register_symbol_table(symbol_table);
+    exp_dwdy[i].register_symbol_table(symbol_table);
+    exp_dwdz[i].register_symbol_table(symbol_table);
 
-        parser.compile(function_u, exp_u[i]);
-        parser.compile(function_v, exp_v[i]);
-        parser.compile(function_w, exp_w[i]);
-        parser.compile(function_dudx, exp_dudx[i]);
-        parser.compile(function_dudy, exp_dudy[i]);
-        parser.compile(function_dudz, exp_dudz[i]);
-        parser.compile(function_dvdx, exp_dvdx[i]);
-        parser.compile(function_dvdy, exp_dvdy[i]);
-        parser.compile(function_dvdz, exp_dvdz[i]);
-        parser.compile(function_dwdx, exp_dwdx[i]);
-        parser.compile(function_dwdy, exp_dwdy[i]);
-        parser.compile(function_dwdz, exp_dwdz[i]);
-    }
+    exprtk::parser<double> parser;
+
+    parser.compile(function_u, exp_u[i]);
+    parser.compile(function_v, exp_v[i]);
+    parser.compile(function_w, exp_w[i]);
+    parser.compile(function_dudx, exp_dudx[i]);
+    parser.compile(function_dudy, exp_dudy[i]);
+    parser.compile(function_dudz, exp_dudz[i]);
+    parser.compile(function_dvdx, exp_dvdx[i]);
+    parser.compile(function_dvdy, exp_dvdy[i]);
+    parser.compile(function_dvdz, exp_dvdz[i]);
+    parser.compile(function_dwdx, exp_dwdx[i]);
+    parser.compile(function_dwdy, exp_dwdy[i]);
+    parser.compile(function_dwdz, exp_dwdz[i]);
+  }
 };
 
 flowmap::~flowmap(void) {
@@ -395,11 +388,10 @@ flowmap::~flowmap(void) {
 	delete [] exp_dudx;
 	delete [] exp_dudy;
 	delete [] exp_dudz;
-    delete [] exp_dvdx;
-    delete [] exp_dvdy;
-    delete [] exp_dvdz;
-    delete [] exp_dwdx;
-    delete [] exp_dwdy;
-    delete [] exp_dwdz;
-	
+  delete [] exp_dvdx;
+  delete [] exp_dvdy;
+  delete [] exp_dvdz;
+  delete [] exp_dwdx;
+  delete [] exp_dwdy;
+  delete [] exp_dwdz;
 };
