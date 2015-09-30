@@ -20,7 +20,14 @@ private:
 	vector<double> x;
 	vector<double> y;
 	vector<double> z;
+  double*** eig1;
+  double*** eig2;
+  double*** eig3;
+  double**** v1;
+  double**** v2;
+  double**** v3;
 	double*** ftle;
+
 };
 
 #endif
