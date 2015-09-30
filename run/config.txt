@@ -1,39 +1,34 @@
 #_fichier_de_configuration
 T0      0
-T       -10
-Npt     100
+T       3
+Npt     60
 
 #_parameter_
 MthOde  Euler
 
 #_Dimensions_
-Nx      1000
-Ny      1000
-Nz      3
-xmin    0.0  
-xmax    2.0
+Nx      500
+Ny      500
+Nz      10
+xmin    0.0
+xmax    7.0
 ymin    0.0
-ymax    1.0
-zmin    -0.1
-zmax    0.1
-
-#_Output_files_
-File_CG output_cg.dat
+ymax    7.0
+zmin    -0.05
+zmax    0.05
 
 #_analytical_velocity_field
-function_u      0.1*pi*sin(pi*(x*(2*0.1*sin(2.0*pi/10.0*t)-1)-0.1*x*x*sin(2.0*pi/10.0*t)))*cos(pi*y)
-function_v      0.1*pi*cos(pi*(x*(2*0.1*sin(2.0*pi/10.0*t)-1)-0.1*x*x*sin(2.0*pi/10.0*t)))*sin(pi*y)*(2*0.1*x*sin(2.0*pi/10.0*t)-2*0.1*sin(2.0*pi/10.0*t)+1)
-function_w      0.0
-function_dudx   -pi*pi*0.1*cos(pi*(x*(2*0.1*sin(2.0*pi/10.0*t)-1)-0.1*x*x*sin(2.0*pi/10.0*t)))*cos(pi*y)*(2*0.1*x*sin(2.0*pi/10.0*t)-2*0.1*sin(2.0*pi/10.0*t)+1)
-function_dudy   -pi*pi*0.1*sin(pi*(x*(2*0.1*sin(2.0*pi/10.0*t)-1)-0.1*x*x*sin(2.0*pi/10.0*t)))*sin(pi*y)
-function_dudz   0.0
-function_dvdx   pi*pi*0.1*sin(pi*(x*(2*0.1*sin(2.0*pi/10.0*t)-1)-0.1*x*x*sin(2.0*pi/10.0*t)))*sin(pi*y)*(2*0.1*x*sin(2.0*pi/10.0*t)-2*0.1*sin(2.0*pi/10.0*t)+1)^2+2*0.1*pi*0.1*cos(pi*(x*(2*0.1*sin(2.0*pi/10.0*t)-1)-0.1*x*x*sin(2.0*pi/10.0*t)))*sin(pi*y)*sin(2.0*pi/10.0*t)
-function_dvdy   0.1*pi*pi*cos(pi*(x*(2*0.1*sin(2.0*pi/10.0*t)-1)-0.1*x*x*sin(2.0*pi/10.0*t)))*cos(pi*y)*(2*0.1*x*sin(2.0*pi/10.0*t)-2*0.1*sin(2.0*pi/10.0*t)+1)
-function_dvdz   0.0
-function_dwdx   0.0
-function_dwdy   0.0
+function_u      sqrt(3)*sin(z)+1.0*cos(y)
+function_v      sqrt(2)*sin(x)+sqrt(3)*cos(z)
+function_w      1.0*sin(y)+sqrt(2)*cos(x)
+function_dudx   0.0
+function_dudy   -1.0*sin(y)
+function_dudz   sqrt(3)*cos(z)
+function_dvdx   sqrt(2)*cos(x)
+function_dvdy   0.0
+function_dvdz   -sqrt(3)*sin(z)
+function_dwdx   -sqrt(2)*sin(x)
+function_dwdy   1.0*cos(y)
 function_dwdz   0.0
-
-
 	
 End
