@@ -5,7 +5,8 @@ extern "C" {
     void daxpy_(int& n, double& alpha, double* x, int& incx, double* y, int& incy);  
 }
 
-flowmap::flowmap(shared_ptr<parameter>& objpara):     
+flowmap::flowmap(shared_ptr<parameter>& objpara):
+  ode(objpara->mthode()),
   nx(objpara->nx()),
   ny(objpara->ny()),
   nz(objpara->nz()),
@@ -15,10 +16,6 @@ flowmap::flowmap(shared_ptr<parameter>& objpara):
   ymax(objpara->ymax()),
   zmin(objpara->zmin()),
   zmax(objpara->zmax()),
-  t(objpara->t()),
-  t0(objpara->t0()),
-  npt(objpara->npt()),
-  ode(objpara->mthode()),
   function_u(objpara->fu()),
   function_v(objpara->fv()),
   function_w(objpara->fw()),
@@ -30,7 +27,10 @@ flowmap::flowmap(shared_ptr<parameter>& objpara):
   function_dvdz(objpara->fdvdz()),
   function_dwdx(objpara->fdwdx()),
   function_dwdy(objpara->fdwdy()),
-  function_dwdz(objpara->fdwdz())
+  function_dwdz(objpara->fdwdz()),
+  t(objpara->t()),
+  npt(objpara->npt()),
+  t0(objpara->t0())
 {
 
 cout << "Flow map integrations (T=" << t << "s) for the " << nx*ny*nz << " particles." << endl;
@@ -90,7 +90,7 @@ phi_dwdz_ = Construct3D(nx, ny, nz);
 // 2- Trouver les coordonnees du noeud courant
 // 3- Calculer le delacement Lagrangien du noeud  
 //    a l'aide des vitesses mesurees par PIV
-//#pragma omp parallel for
+#pragma omp parallel for
 for (int i=0; i<nx;i++) {
     for (int j=0; j<ny; j++) { 
         for (int k=0; k<nz; k++) {
@@ -154,13 +154,9 @@ x0[11]=1.0;
 double dt = t/(npt-1);
 
 for (int k(0); k<npt; k++) {
-    
   // velocity interpolation
   double t  = t0 + k*dt;
-    
   interpolation(t,x0,u);
-  //cout << "x=" << x0[0] << " y=" << x0[1] << endl;
-  //cout << "u=" << g[0] << " v=" << g[1] << endl;
 
   // x0 += u*dt
 	daxpy_(nd, dt, u, incx, x0, incx);
@@ -191,6 +187,7 @@ double y6[nd];
 y1[0]=d[0];   // x_0
 y1[1]=d[1];   // y_0
 y1[2]=d[2];   // z_0
+
 // CI Derivee premiere
 y1[3]=1.0;      
 y1[4]=0.0;      
@@ -259,7 +256,6 @@ void flowmap::interpolation (double t, double* y, double* g)
   //cout << "x:" << y[0] << " y: " << y[1] << endl;
   double f[12];
 
-  // TODO
   // one variable and one expression
   // for every thread
   int tid = omp_get_thread_num();

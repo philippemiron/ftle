@@ -55,6 +55,12 @@ private:
   vector<double> var_y;
   vector<double> var_z;
   vector<double> var_t;
+  double xmin;
+  double xmax;
+  double ymin;
+  double ymax;
+  double zmin;
+  double zmax;
   string function_u;
   string function_v;
   string function_w;
@@ -67,16 +73,9 @@ private:
   string function_dwdx;
   string function_dwdy;
   string function_dwdz;
-	double xmin;
-	double xmax;
-	double ymin;
-	double ymax;
-	double zmin;
-	double zmax;
 	double t;
 	int   npt;
 	int   t0;
-
 	double*** phi_x_;
 	double*** phi_y_;
 	double*** phi_z_;
