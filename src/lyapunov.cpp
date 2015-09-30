@@ -39,7 +39,8 @@ char jobz = 'V';
 char uplo = 'U';
             
 // Calcul des coefficients du tenseur pour tous les noeuds du champ
-for (int i(0); i<nx; i++) {
+#pragma omp parallel for
+for (int i=0; i<nx; i++) {
   for (int j(0); j<ny; j++) {
     for (int k(0); k<nz; k++) {
       //  D1  D2  D3
