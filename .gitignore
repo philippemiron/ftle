@@ -28,8 +28,9 @@ data/*
 *.hpp~
 Makefile~
 
-# Netbeans project
+# Netbeans/Clion project
 nbproject/*
+.idea/*
 
 # temp files
 *.swp
