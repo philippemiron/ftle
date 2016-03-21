@@ -14,7 +14,6 @@
 #include <cmath>
 #include <algorithm>
 #include <iterator>
-#include <tecio.h>
 #include <limits>
 #include "exprtk.hpp"
 #include <memory>

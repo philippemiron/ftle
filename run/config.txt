@@ -1,15 +1,17 @@
 #_fichier_de_configuration
 T0      0
 T       3
-Npt     60
+tolerance 1e-06
+hmin    1e-05
+hmax    1.0
 
 #_parameter_
 MthOde  Euler
 
 #_Dimensions_
-Nx      500
-Ny      500
-Nz      10
+nx      200
+ny      200
+nz      3
 xmin    0.0
 xmax    7.0
 ymin    0.0

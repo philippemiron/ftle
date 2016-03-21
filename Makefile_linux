@@ -14,10 +14,7 @@ obj_main := $(patsubst %.cpp,%.o,$(wildcard $(main)/*.cpp))
 obj_src := $(patsubst %.cpp,%.o,$(wildcard $(src)/*.cpp))
 
 # include directories and external libraries
-INCLUDE = -I./lib/tecio/tecsrc -I./lib -I./src -I./include
-
-# required external library
-LIBEXT =  ./lib/libtecio_linux.a
+INCLUDE = -I./src -I./include
 
 # standard library
 LINK_LIBS = -lblas -llapack
@@ -29,7 +26,7 @@ all: dns
 
 dns: $(obj_src) $(obj_main)
 	@echo "Building main:"
-	$(COMPILATEUR_C) $(FLAGS_C) $(INCLUDE) -o $(main)/ftle.bin $(obj_main) $(obj_src) $(LIBEXT) $(LINK_LIBS)
+	$(COMPILATEUR_C) $(FLAGS_C) $(INCLUDE) -o $(main)/ftle.bin $(obj_main) $(obj_src) $(LINK_LIBS)
 
 # Compile all source files .cpp into .o files
 $(TARGETDIR)/%.o: $(TARGETDIR)/%.cpp $(TARGETDIR)/%.h
@@ -39,10 +36,6 @@ $(TARGETDIR)/%.o: $(TARGETDIR)/%.cpp $(TARGETDIR)/%.h
 $(TARGETDIR)/%.o: $(TARGETDIR)/%.cpp
 	$(COMPILATEUR_C) $(FLAGS_C) $(INCLUDE) -c $< -o $@
 
-# Compile all source files .f into .o files
-$(TARGETDIR)/%.o: $(TARGETDIR)/%.f $(TARGETDIR)/%.h
-	$(COMPILATEUR_F) $(FLAGS_F) $(INCLUDE) -c $< -o $@
-
 clean:
-	cd $(main); rm -f *.o *.bin;
+	cd $(main); rm -f *.o *.bin *.app;
 	cd $(src); rm -f *.o *.a;

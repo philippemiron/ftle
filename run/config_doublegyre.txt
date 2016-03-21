@@ -1,24 +1,23 @@
 #_fichier_de_configuration
 T0      0
 T       -10
-Npt     100
+tolerance 1e-06
+hmin    1e-05
+hmax    1.0
 
 #_parameter_
 MthOde  Euler
 
 #_Dimensions_
-Nx      1000
-Ny      1000
-Nz      3
+nx      500
+ny      100
+nz      3
 xmin    0.0  
 xmax    2.0
 ymin    0.0
 ymax    1.0
 zmin    -0.1
 zmax    0.1
-
-#_Output_files_
-File_CG output_cg.dat
 
 #_analytical_velocity_field
 function_u      0.1*pi*sin(pi*(x*(2*0.1*sin(2.0*pi/10.0*t)-1)-0.1*x*x*sin(2.0*pi/10.0*t)))*cos(pi*y)
@@ -34,6 +33,4 @@ function_dwdx   0.0
 function_dwdy   0.0
 function_dwdz   0.0
 
-
-	
 End
