@@ -6,21 +6,22 @@
 
 using namespace std;
 
-int main( int argc, char** argv )
-{
-cout << "Using " << omp_get_max_threads() << " threads" << endl;
+int main(int argc, char **argv) {
+  cout << "Using " << omp_get_max_threads() << " threads" << endl;
 
-// reading parameter file
-auto objpara = make_shared<parameter>(argv[1]);
- 
-// flowmap calculation
-auto objfm = make_shared<flowmap>(objpara);
+  // reading parameter file
+  auto objpara = make_shared<parameter>(argv[1]);
 
-// ftle calculation from flowmap field
-auto objftle = make_shared<lyapunov>(objpara, objfm);
+  // flowmap calculation
+  auto objfm = make_shared<flowmap>(objpara);
+  objfm->calculate_trajectories();
 
-// writing output
-auto objwrite = make_shared<writedata>(objpara, objfm, objftle);
+  // ftle calculation from flowmap field
+  auto objftle = make_shared<lyapunov>(objpara, objfm);
+  objftle->calculate_ftle();
 
-return 0;
+  // writing output
+  auto objwrite = make_shared<writedata>(objpara, objfm, objftle);
+
+  return 0;
 }

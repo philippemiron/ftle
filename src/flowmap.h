@@ -10,6 +10,7 @@ using namespace std;
 class flowmap {
  public:
   flowmap(shared_ptr<parameter> &objpara);
+  void calculate_trajectories();
   virtual ~flowmap();
   vector3d<double> phi_x() const { return phi_x_; };
   vector3d<double> phi_y() const { return phi_y_; };
@@ -33,7 +34,7 @@ class flowmap {
   int nz;
   void initialize_expression(int number_of_threads);
   vector<double> velocity(double t, vector<double> &y);
-  void ode45(double t0, double t1, double tol, double hmin, double hmax, size_t maxiter, vector<double> &d);
+  void rk45(double t0, double t1, double tol, double hmin, double hmax, size_t maxiter, vector<double> &d);
 
   exprtk::expression<double> *exp_u;
   exprtk::expression<double> *exp_v;
@@ -90,7 +91,7 @@ class flowmap {
   vector<double> y_;
   vector<double> z_;
 
-  // ode45 coefficients
+  // rk45 coefficients
   const double a21 = 1.0/5.0;
   const double a31 = 3.0/40.0;
   const double a32 = 9.0/40.0;

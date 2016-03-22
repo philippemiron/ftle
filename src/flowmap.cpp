@@ -26,13 +26,10 @@ flowmap::flowmap(shared_ptr<parameter> &objpara) :
     t0(objpara->t0()),
     tol(objpara->tolerance()),
     hmin(objpara->hmin()),
-    hmax(objpara->hmax()) {
-
-  cout << "Flow map integrations (T=" << t << "s) for the " << nx*ny*nz << " particles." << endl;
-
+    hmax(objpara->hmax())
+{
   // Setting up the expression evaluation
-  int number_of_threads = omp_get_max_threads();
-  initialize_expression(number_of_threads);
+  initialize_expression(omp_get_max_threads());
 
   x_.resize(nx, 0.0);
   y_.resize(ny, 0.0);
@@ -40,17 +37,14 @@ flowmap::flowmap(shared_ptr<parameter> &objpara) :
 
   for (int i(0); i < nx; i++)
     x_[i] = xmin + i*(xmax - xmin)/(nx - 1);
-
   for (int i(0); i < ny; i++)
     y_[i] = ymin + i*(ymax - ymin)/(ny - 1);
-
   for (int i(0); i < nz; i++)
     z_[i] = zmin + i*(zmax - zmin)/(nz - 1);
 
   vecResize(phi_x_, nx, ny, nz);
   vecResize(phi_y_, nx, ny, nz);
   vecResize(phi_z_, nx, ny, nz);
-
   vecResize(phi_dudx_, nx, ny, nz);
   vecResize(phi_dudy_, nx, ny, nz);
   vecResize(phi_dudz_, nx, ny, nz);
@@ -60,7 +54,9 @@ flowmap::flowmap(shared_ptr<parameter> &objpara) :
   vecResize(phi_dwdx_, nx, ny, nz);
   vecResize(phi_dwdy_, nx, ny, nz);
   vecResize(phi_dwdz_, nx, ny, nz);
+};
 
+void flowmap::calculate_trajectories() {
   // Calculate trajectory of every particle
   // at every node of the mesh
   #pragma omp parallel for
@@ -74,8 +70,9 @@ flowmap::flowmap(shared_ptr<parameter> &objpara) :
         d[2] = z_[k];
 
         // solve trajectories for each particle and retrieve final position
-        ode45(t0, t0+t, tol, hmin, hmax, 10000, d);
+        rk45(t0, t0 + t, tol, hmin, hmax, 100000, d);
 
+        // save values
         phi_x_[i][j][k] = d[0];
         phi_y_[i][j][k] = d[1];
         phi_z_[i][j][k] = d[2];
@@ -92,10 +89,9 @@ flowmap::flowmap(shared_ptr<parameter> &objpara) :
       }
     }
   }
-}
+};
 
-
-void flowmap::ode45(double t0, double tend, double tol, double hmin, double hmax, size_t maxiter, vector<double> &d)  {
+void flowmap::rk45(double t0, double tend, double tol, double hmin, double hmax, size_t maxiter, vector<double> &d) {
 
   vector<double> x(12, 0.0);
   // x_0, y_0, z_0
@@ -114,12 +110,12 @@ void flowmap::ode45(double t0, double tend, double tol, double hmin, double hmax
   x[11] = 1.0;
 
   double t(t0);
-  double h(1e-2*copysign(tend-t0,1.0)); // initial timestep
+  double h(1e-2*copysign(tend - t0, 1.0)); // initial time step
   vector<double> K1, K2, K3, K4, K5, K6, K7;
   vector<double> x1(x.size()), x2(x.size()), x3(x.size()), x4(x.size()), x5(x.size()), x6(x.size());
   vector<double> error(x.size(), 0.0);
 
-  for (size_t i(0); i<maxiter; i++) {
+  for (size_t i(0); i < maxiter; i++) {
     K1 = velocity(t, x);
     for (size_t j(0); j < x.size(); j++)
       x1[j] = x[j] + h*(a21*K1[j]);
@@ -146,14 +142,15 @@ void flowmap::ode45(double t0, double tend, double tol, double hmin, double hmax
 
     K7 = velocity(t + h, x6);
     for (size_t j(0); j < x.size(); j++)
-      error[j] = abs((b1 - b1p)*K1[j] + (b3 - b3p)*K3[j] + (b4 - b4p)*K4[j] + (b5 - b5p)*K5[j] + (b6 - b6p)*K6[j] + (-b7p)*K7[j]);
+      error[j] = abs((b1 - b1p)*K1[j] + (b3 - b3p)*K3[j] + (b4 - b4p)*K4[j] + (b5 - b5p)*K5[j] + (b6 - b6p)*K6[j]
+                         + (-b7p)*K7[j]);
 
     // error control on trajectory
     double maxerror = max(error[0], max(error[1], error[2]));
     if (maxerror < tol) {
       // accept time step
       t += h;
-      for (size_t j(0); j<x.size(); j++)
+      for (size_t j(0); j < x.size(); j++)
         x[j] += h*(b1*K1[j] + b3*K3[j] + b4*K4[j] + b5*K5[j] + b6*K6[j]);
     }
 
@@ -171,16 +168,16 @@ void flowmap::ode45(double t0, double tend, double tol, double hmin, double hmax
     // last step
     if (t == tend) {
       break;
-    } else if (h>0.0 and t + h > tend) {
+    } else if (h > 0.0 and t + h > tend) {
       h = tend - t;
-    } else if (h<0.0 and t + h < tend) {
+    } else if (h < 0.0 and t + h < tend) {
       h = tend - t;
     } else if (abs(h) < hmin) {
       //flag = 1
       break;
     }
 
-    if (i == maxiter-1)
+    if (i == maxiter - 1)
       cout << "reach max iterations" << endl;
   }
   d = x;

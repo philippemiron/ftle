@@ -30,7 +30,6 @@ lyapunov::lyapunov(shared_ptr<parameter> &objpara, shared_ptr<flowmap> &objphi) 
     phi_dwdx(objphi->phi_dwdx()),
     phi_dwdy(objphi->phi_dwdy()),
     phi_dwdz(objphi->phi_dwdz()) {
-  cout << "Calculating FTLE" << endl;
 
   vecResize(ftle_, nx, ny, nz);
   vecResize(eig1_, nx, ny, nz);
@@ -40,6 +39,9 @@ lyapunov::lyapunov(shared_ptr<parameter> &objpara, shared_ptr<flowmap> &objphi) 
   vecResize(v2_, nx, ny, nz, 3);
   vecResize(v3_, nx, ny, nz, 3);
 
+};
+
+void lyapunov::calculate_ftle() {
   // Lapack parameters
   int n(3), lda(n), lwork(1 + 6*n + 2*n*n), liwork(3 + 5*n), info(0);
   char jobz = 'V';
@@ -106,4 +108,4 @@ lyapunov::lyapunov(shared_ptr<parameter> &objpara, shared_ptr<flowmap> &objphi) 
       }
     }
   }
-}
+};

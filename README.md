@@ -25,7 +25,8 @@ Finite time Lyapunov exponent (FTLE) from analytical velocity field
 	- http://en.wikipedia.org/wiki/Lyapunov_exponent
 	- http://mmae.iit.edu/shadden/LCS-tutorial/FTLE-derivation.html
 
-1. Compile using available Makefiles or using CLion
-2. Run using on of the config files in the /run/ directory
-3. Output file (ftle.dat) would be create in running directory.
-4. Open in Tecplot to visualize FTLE field.
+Usage:
+1. `make with the Makefile or with CLion or other IDE`
+2. `./main/ftle.bin config.txt  (or other configs in /run/)`
+3. `Output file (ftle.dat) will be created in running directory`
+4. `Open in Tecplot to visualize FTLE field`
