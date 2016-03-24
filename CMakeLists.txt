@@ -21,8 +21,6 @@ set(SOURCE_FILES
     src/matrix.cpp
     src/matrix.h
     src/parameter.cpp
-    src/parameter.h
-    src/writedata.cpp
-    src/writedata.h)
+    src/parameter.h)
 
 add_executable(ftle ${SOURCE_FILES})

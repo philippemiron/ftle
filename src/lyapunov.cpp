@@ -13,23 +13,26 @@ void dsyevd_(char &jobz,
              int &info);
 }
 
-lyapunov::lyapunov(shared_ptr<parameter> &objpara, shared_ptr<flowmap> &objphi) :
+lyapunov::lyapunov(shared_ptr<parameter> &objpara, shared_ptr<flowmap> &objfm) :
     t(objpara->t()),
     nx(objpara->nx()),
     ny(objpara->ny()),
     nz(objpara->nz()),
-    phi_x(objphi->phi_x()),
-    phi_y(objphi->phi_y()),
-    phi_z(objphi->phi_z()),
-    phi_dudx(objphi->phi_dudx()),
-    phi_dudy(objphi->phi_dudy()),
-    phi_dudz(objphi->phi_dudz()),
-    phi_dvdx(objphi->phi_dvdx()),
-    phi_dvdy(objphi->phi_dvdy()),
-    phi_dvdz(objphi->phi_dvdz()),
-    phi_dwdx(objphi->phi_dwdx()),
-    phi_dwdy(objphi->phi_dwdy()),
-    phi_dwdz(objphi->phi_dwdz()) {
+    x(objfm->x()),
+    y(objfm->y()),
+    z(objfm->z()),
+    phi_x(objfm->phi_x()),
+    phi_y(objfm->phi_y()),
+    phi_z(objfm->phi_z()),
+    phi_dudx(objfm->phi_dudx()),
+    phi_dudy(objfm->phi_dudy()),
+    phi_dudz(objfm->phi_dudz()),
+    phi_dvdx(objfm->phi_dvdx()),
+    phi_dvdy(objfm->phi_dvdy()),
+    phi_dvdz(objfm->phi_dvdz()),
+    phi_dwdx(objfm->phi_dwdx()),
+    phi_dwdy(objfm->phi_dwdy()),
+    phi_dwdz(objfm->phi_dwdz()) {
 
   vecResize(ftle_, nx, ny, nz);
   vecResize(eig1_, nx, ny, nz);
@@ -108,4 +111,34 @@ void lyapunov::calculate_ftle() {
       }
     }
   }
+};
+
+void lyapunov::output(string file) {
+  //Opening the file
+  ofstream myfile(file.c_str());
+  if (myfile.is_open()) {
+    // TP Headlines
+    myfile << "TITLE = \"ftle\"" << endl;
+    myfile << "VARIABLES = x, y, z, xi1_x, xi1_y, xi1_z, xi2_x, xi2_y, xi2_z, xi3_x, xi3_y, xi3_z, L1, L2, L3, ftle"
+        << endl;
+    myfile << "zone I=" << nx << ", J=" << ny << ", K=" << nz << ", DATAPACKING=POINT" << endl;
+
+    for (int k(0); k < nz; k++) {
+      for (int j(0); j < ny; j++) {
+        for (int i(0); i < nx; i++) {
+          myfile << x[i] << " " << y[j] << " " << z[k] << " ";
+          myfile << v1_[i][j][k][0] << " " << v1_[i][j][k][1] << " " << v1_[i][j][k][2] << " ";
+          myfile << v2_[i][j][k][0] << " " << v2_[i][j][k][1] << " " << v2_[i][j][k][2] << " ";
+          myfile << v3_[i][j][k][0] << " " << v3_[i][j][k][1] << " " << v3_[i][j][k][2] << " ";
+          myfile << eig1_[i][j][k] << " " << eig2_[i][j][k] << " " << eig3_[i][j][k] << " " << ftle_[i][j][k] << endl;
+        }
+      }
+    }
+    // Closing the file
+    myfile.close();
+  } else {
+    cout << "Can't open output file name: " << file << endl;
+    exit(0);
+  }
+
 };

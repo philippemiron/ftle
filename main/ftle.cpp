@@ -2,7 +2,6 @@
 #include "parameter.h"
 #include "flowmap.h"
 #include "lyapunov.h"
-#include "writedata.h"
 
 using namespace std;
 
@@ -19,9 +18,7 @@ int main(int argc, char **argv) {
   // ftle calculation from flowmap field
   auto objftle = make_shared<lyapunov>(objpara, objfm);
   objftle->calculate_ftle();
-
-  // writing output
-  auto objwrite = make_shared<writedata>(objpara, objfm, objftle);
+  objftle->output("ftle.dat");
 
   return 0;
 }
