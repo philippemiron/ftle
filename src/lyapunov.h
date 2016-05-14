@@ -9,9 +9,10 @@ using namespace std;
 
 class lyapunov {
  public:
-  lyapunov(shared_ptr<parameter> &objpara, shared_ptr<flowmap> &objfm);
+  lyapunov(const shared_ptr<parameter> &objpara, const shared_ptr<flowmap> &objfm);
   void calculate_ftle();
   void output(string file);
+  void outputVTK(string file);
   vector3d<double> ftle() const { return ftle_; };
   vector3d<double> eig1() const { return eig1_; };
   vector3d<double> eig2() const { return eig2_; };

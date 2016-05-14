@@ -13,7 +13,7 @@ void dsyevd_(char &jobz,
              int &info);
 }
 
-lyapunov::lyapunov(shared_ptr<parameter> &objpara, shared_ptr<flowmap> &objfm) :
+lyapunov::lyapunov(const shared_ptr<parameter> &objpara, const shared_ptr<flowmap> &objfm) :
     t(objpara->t()),
     nx(objpara->nx()),
     ny(objpara->ny()),
@@ -41,37 +41,36 @@ lyapunov::lyapunov(shared_ptr<parameter> &objpara, shared_ptr<flowmap> &objfm) :
   vecResize(v1_, nx, ny, nz, 3);
   vecResize(v2_, nx, ny, nz, 3);
   vecResize(v3_, nx, ny, nz, 3);
-
 };
 
 void lyapunov::calculate_ftle() {
   // Lapack parameters
-  int n(3), lda(n), lwork(1 + 6*n + 2*n*n), liwork(3 + 5*n), info(0);
+  int n(3), lda(n), lwork(1 + 6 * n + 2 * n * n), liwork(3 + 5 * n), info(0);
   char jobz = 'V';
   char uplo = 'U';
 
   // Calculate Cauchy-Green matrix at every node
   // Solve eingenvalue problems
   // Obtain Lyapunov exponent
-  #pragma omp parallel for
+#pragma omp parallel for
   for (int i = 0; i < nx; i++) {
     for (int j(0); j < ny; j++) {
       for (int k(0); k < nz; k++) {
         //  D1  D2  D3
         //  D2  D4  D5
         //  D3  D5  D6
-        double D1 = phi_dudx[i][j][k]*phi_dudx[i][j][k] + phi_dvdx[i][j][k]*phi_dvdx[i][j][k]
-            + phi_dwdx[i][j][k]*phi_dwdx[i][j][k];
-        double D2 = phi_dudx[i][j][k]*phi_dudy[i][j][k] + phi_dvdx[i][j][k]*phi_dvdy[i][j][k]
-            + phi_dwdx[i][j][k]*phi_dwdy[i][j][k];
-        double D3 = phi_dudx[i][j][k]*phi_dudz[i][j][k] + phi_dvdx[i][j][k]*phi_dvdz[i][j][k]
-            + phi_dwdx[i][j][k]*phi_dwdz[i][j][k];
-        double D4 = phi_dudy[i][j][k]*phi_dudy[i][j][k] + phi_dvdy[i][j][k]*phi_dvdy[i][j][k]
-            + phi_dwdy[i][j][k]*phi_dwdy[i][j][k];
-        double D5 = phi_dudy[i][j][k]*phi_dudz[i][j][k] + phi_dvdy[i][j][k]*phi_dvdz[i][j][k]
-            + phi_dwdy[i][j][k]*phi_dwdz[i][j][k];
-        double D6 = phi_dudz[i][j][k]*phi_dudz[i][j][k] + phi_dvdz[i][j][k]*phi_dvdz[i][j][k]
-            + phi_dwdz[i][j][k]*phi_dwdz[i][j][k];
+        double D1 = phi_dudx[i][j][k] * phi_dudx[i][j][k] + phi_dvdx[i][j][k] * phi_dvdx[i][j][k]
+            + phi_dwdx[i][j][k] * phi_dwdx[i][j][k];
+        double D2 = phi_dudx[i][j][k] * phi_dudy[i][j][k] + phi_dvdx[i][j][k] * phi_dvdy[i][j][k]
+            + phi_dwdx[i][j][k] * phi_dwdy[i][j][k];
+        double D3 = phi_dudx[i][j][k] * phi_dudz[i][j][k] + phi_dvdx[i][j][k] * phi_dvdz[i][j][k]
+            + phi_dwdx[i][j][k] * phi_dwdz[i][j][k];
+        double D4 = phi_dudy[i][j][k] * phi_dudy[i][j][k] + phi_dvdy[i][j][k] * phi_dvdy[i][j][k]
+            + phi_dwdy[i][j][k] * phi_dwdy[i][j][k];
+        double D5 = phi_dudy[i][j][k] * phi_dudz[i][j][k] + phi_dvdy[i][j][k] * phi_dvdz[i][j][k]
+            + phi_dwdy[i][j][k] * phi_dwdz[i][j][k];
+        double D6 = phi_dudz[i][j][k] * phi_dudz[i][j][k] + phi_dvdz[i][j][k] * phi_dvdz[i][j][k]
+            + phi_dwdz[i][j][k] * phi_dwdz[i][j][k];
 
         // Lapack parameter
         // and variable to store
@@ -95,7 +94,7 @@ void lyapunov::calculate_ftle() {
         for (int m(0); m < 3; m++) {
           v1_[i][j][k][m] = a[m];
           v2_[i][j][k][m] = a[n + m];
-          v3_[i][j][k][m] = a[2*n + m];
+          v3_[i][j][k][m] = a[2 * n + m];
         }
 
         eig1_[i][j][k] = w[0];
@@ -105,7 +104,7 @@ void lyapunov::calculate_ftle() {
         // Lyapunov exponent
         double eig_max = max(max(w[0], w[1]), w[2]);
         if (eig_max > numeric_limits<double>::epsilon())
-          ftle_[i][j][k] = log(eig_max)/2.0/fabs(t);
+          ftle_[i][j][k] = log(eig_max) / 2.0 / fabs(t);
         else
           ftle_[i][j][k] = 0;
       }
@@ -114,10 +113,8 @@ void lyapunov::calculate_ftle() {
 };
 
 void lyapunov::output(string file) {
-  //Opening the file
-  ofstream myfile(file.c_str());
+  ofstream myfile(file);
   if (myfile.is_open()) {
-    // TP Headlines
     myfile << "TITLE = \"ftle\"" << endl;
     myfile << "VARIABLES = x, y, z, xi1_x, xi1_y, xi1_z, xi2_x, xi2_y, xi2_z, xi3_x, xi3_y, xi3_z, L1, L2, L3, ftle"
         << endl;
@@ -137,8 +134,70 @@ void lyapunov::output(string file) {
     // Closing the file
     myfile.close();
   } else {
-    cout << "Can't open output file name: " << file << endl;
-    exit(0);
+    cerr << "Can't open output file name: " << file << endl;
+    exit(-1);
   }
-
 };
+
+void lyapunov::outputVTK(string file) {
+  ofstream myfile(file);
+  if (myfile.is_open()) {
+    myfile << "# vtk DataFile Version 2.0" << endl;
+    myfile << "Solution" << endl;
+    myfile << "ASCII" << endl << endl;
+
+    myfile << "DATASET RECTILINEAR_GRID" << endl;
+    myfile << "DIMENSIONS " << nx << " " << ny << " " << nz << endl;
+
+    myfile << "X_COORDINATES " << nx << " float" << endl;
+    for (int i(0); i < nx; i++)
+      myfile << x[i] << " ";
+
+    myfile << endl << "Y_COORDINATES " << ny << " float" << endl;
+    for (int i(0); i < ny; i++)
+      myfile << y[i] << " ";
+
+    myfile << endl << "Z_COORDINATES " << nz << " float" << endl;
+    for (int i(0); i < nz; i++)
+      myfile << z[i] << " ";
+
+    myfile << endl << "POINT_DATA " << nx * ny * nz << endl;
+
+    myfile << "VECTORS " << "Eigenvector1" << " float" << endl;
+    for (int k(0); k < nz; k++)
+      for (int j(0); j < ny; j++)
+        for (int i(0); i < nx; i++)
+          myfile << v1_[i][j][k][0] << " " << v1_[i][j][k][1] << " " << v1_[i][j][k][2] << endl;
+
+    myfile << "VECTORS " << "Eigenvector2" << " float" << endl;
+    for (int k(0); k < nz; k++)
+      for (int j(0); j < ny; j++)
+        for (int i(0); i < nx; i++)
+          myfile << v2_[i][j][k][0] << " " << v2_[i][j][k][1] << " " << v2_[i][j][k][2] << endl;
+
+    myfile << "VECTORS " << "Eigenvector3" << " float" << endl;
+    for (int k(0); k < nz; k++)
+      for (int j(0); j < ny; j++)
+        for (int i(0); i < nx; i++)
+          myfile << v3_[i][j][k][0] << " " << v3_[i][j][k][1] << " " << v3_[i][j][k][2] << endl;
+
+    myfile << "SCALARS " << "Eigenvalues" << " float" << " 3" << endl;
+    myfile << "LOOKUP_TABLE default" << endl;
+    for (int k(0); k < nz; k++)
+      for (int j(0); j < ny; j++)
+        for (int i(0); i < nx; i++)
+          myfile << eig1_[i][j][k] << " " << eig2_[i][j][k] << " " << eig3_[i][j][k] << endl;
+
+    myfile << "SCALARS " << "FTLE" << " float" << " 1" << endl;
+    myfile << "LOOKUP_TABLE default" << endl;
+    for (int k(0); k < nz; k++)
+      for (int j(0); j < ny; j++)
+        for (int i(0); i < nx; i++)
+          myfile << ftle_[i][j][k] << endl;
+
+    myfile.close();
+  } else {
+    cerr << "Can't open output file name: " << file << "." << endl;
+    exit(-1);
+  }
+}
