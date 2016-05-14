@@ -19,6 +19,7 @@ int main(int argc, char **argv) {
   auto objftle = make_shared<lyapunov>(objpara, objfm);
   objftle->calculate_ftle();
   objftle->output("ftle.dat");
+  objftle->outputVTK("ftle.vtk");
 
   return 0;
 }

@@ -1,6 +1,6 @@
 #include "flowmap.h"
 
-flowmap::flowmap(shared_ptr<parameter> &objpara) :
+flowmap::flowmap(const shared_ptr<parameter> &objpara) :
     nx(objpara->nx()),
     ny(objpara->ny()),
     nz(objpara->nz()),
@@ -26,8 +26,7 @@ flowmap::flowmap(shared_ptr<parameter> &objpara) :
     t0(objpara->t0()),
     tol(objpara->tolerance()),
     hmin(objpara->hmin()),
-    hmax(objpara->hmax())
-{
+    hmax(objpara->hmax()) {
   // Setting up the expression evaluation
   initialize_expression(omp_get_max_threads());
 
@@ -36,11 +35,11 @@ flowmap::flowmap(shared_ptr<parameter> &objpara) :
   z_.resize(nz, 0.0);
 
   for (int i(0); i < nx; i++)
-    x_[i] = xmin + i*(xmax - xmin)/(nx - 1);
+    x_[i] = xmin + i * (xmax - xmin) / (nx - 1);
   for (int i(0); i < ny; i++)
-    y_[i] = ymin + i*(ymax - ymin)/(ny - 1);
+    y_[i] = ymin + i * (ymax - ymin) / (ny - 1);
   for (int i(0); i < nz; i++)
-    z_[i] = zmin + i*(zmax - zmin)/(nz - 1);
+    z_[i] = zmin + i * (zmax - zmin) / (nz - 1);
 
   vecResize(phi_x_, nx, ny, nz);
   vecResize(phi_y_, nx, ny, nz);
@@ -59,7 +58,7 @@ flowmap::flowmap(shared_ptr<parameter> &objpara) :
 void flowmap::calculate_trajectories() {
   // Calculate trajectory of every particle
   // at every node of the mesh
-  #pragma omp parallel for
+#pragma omp parallel for
   for (int i = 0; i < nx; i++) {
     for (int j = 0; j < ny; j++) {
       for (int k = 0; k < nz; k++) {
@@ -108,9 +107,8 @@ void flowmap::rk45(double t0, double tend, double tol, double hmin, double hmax,
   x[9] = 0.0;
   x[10] = 0.0;
   x[11] = 1.0;
-
   double t(t0);
-  double h(1e-2*copysign(tend - t0, 1.0)); // initial time step
+  double h(1e-2 * copysign(1.0, tend - t0)); // initial time step
   vector<double> K1, K2, K3, K4, K5, K6, K7;
   vector<double> x1(x.size()), x2(x.size()), x3(x.size()), x4(x.size()), x5(x.size()), x6(x.size());
   vector<double> error(x.size(), 0.0);
@@ -118,32 +116,34 @@ void flowmap::rk45(double t0, double tend, double tol, double hmin, double hmax,
   for (size_t i(0); i < maxiter; i++) {
     K1 = velocity(t, x);
     for (size_t j(0); j < x.size(); j++)
-      x1[j] = x[j] + h*(a21*K1[j]);
+      x1[j] = x[j] + h * (a21 * K1[j]);
 
-    K2 = velocity(t + c2*h, x1);
+    K2 = velocity(t + c2 * h, x1);
     for (size_t j(0); j < x.size(); j++)
-      x2[j] = x[j] + h*(a31*K1[j] + a32*K2[j]);
+      x2[j] = x[j] + h * (a31 * K1[j] + a32 * K2[j]);
 
-    K3 = velocity(t + c3*h, x2);
+    K3 = velocity(t + c3 * h, x2);
     for (size_t j(0); j < x.size(); j++)
-      x3[j] = x[j] + h*(a41*K1[j] + a42*K2[j] + a43*K3[j]);
+      x3[j] = x[j] + h * (a41 * K1[j] + a42 * K2[j] + a43 * K3[j]);
 
-    K4 = velocity(t + c4*h, x3);
+    K4 = velocity(t + c4 * h, x3);
     for (size_t j(0); j < x.size(); j++)
-      x4[j] = x[j] + h*(a51*K1[j] + a52*K2[j] + a53*K3[j] + a54*K4[j]);
+      x4[j] = x[j] + h * (a51 * K1[j] + a52 * K2[j] + a53 * K3[j] + a54 * K4[j]);
 
-    K5 = velocity(t + c5*h, x4);
+    K5 = velocity(t + c5 * h, x4);
     for (size_t j(0); j < x.size(); j++)
-      x5[j] = x[j] + h*(a61*K1[j] + a62*K2[j] + a63*K3[j] + a64*K4[j] + a65*K5[j]);
+      x5[j] = x[j] + h * (a61 * K1[j] + a62 * K2[j] + a63 * K3[j] + a64 * K4[j] + a65 * K5[j]);
 
     K6 = velocity(t + h, x5);
     for (size_t j(0); j < x.size(); j++)
-      x6[j] = x[j] + h*(a71*K1[j] + a73*K3[j] + a74*K4[j] + a75*K5[j] + a76*K6[j]);
+      x6[j] = x[j] + h * (a71 * K1[j] + a73 * K3[j] + a74 * K4[j] + a75 * K5[j] + a76 * K6[j]);
 
     K7 = velocity(t + h, x6);
     for (size_t j(0); j < x.size(); j++)
-      error[j] = abs((b1 - b1p)*K1[j] + (b3 - b3p)*K3[j] + (b4 - b4p)*K4[j] + (b5 - b5p)*K5[j] + (b6 - b6p)*K6[j]
-                         + (-b7p)*K7[j]);
+      error[j] =
+          abs((b1 - b1p) * K1[j] + (b3 - b3p) * K3[j] + (b4 - b4p) * K4[j] + (b5 - b5p) * K5[j] +
+              (b6 - b6p) * K6[j]
+                  + (-b7p) * K7[j]);
 
     // error control on trajectory
     double maxerror = max(error[0], max(error[1], error[2]));
@@ -151,21 +151,21 @@ void flowmap::rk45(double t0, double tend, double tol, double hmin, double hmax,
       // accept time step
       t += h;
       for (size_t j(0); j < x.size(); j++)
-        x[j] += h*(b1*K1[j] + b3*K3[j] + b4*K4[j] + b5*K5[j] + b6*K6[j]);
+        x[j] += h * (b1 * K1[j] + b3 * K3[j] + b4 * K4[j] + b5 * K5[j] + b6 * K6[j]);
     }
 
     // limit step variation
-    double delta = 0.9*pow(tol/maxerror, 1.0/5.0);
+    double delta = 0.9 * pow(tol / maxerror, 1.0 / 5.0);
     if (delta <= 0.1) {
       h *= 0.1;
     } else if (delta >= 5.0) {
-      h *= 10.0;
+      h *= 5.0;
     } else {
       h *= delta;
-      h = min(h, hmax);
+      h = min(abs(h), hmax) * copysign(1.0, h);
     }
 
-    // last step
+    // adjust last step
     if (t == tend) {
       break;
     } else if (h > 0.0 and t + h > tend) {
@@ -173,12 +173,11 @@ void flowmap::rk45(double t0, double tend, double tol, double hmin, double hmax,
     } else if (h < 0.0 and t + h < tend) {
       h = tend - t;
     } else if (abs(h) < hmin) {
-      //flag = 1
       break;
     }
 
     if (i == maxiter - 1)
-      cout << "reach max iterations" << endl;
+      cerr << "reach max iterations" << endl;
   }
   d = x;
 }
@@ -222,22 +221,22 @@ vector<double> flowmap::velocity(double t, vector<double> &y) {
   g[2] = f[2];
 
   // and first derivatives
-  g[3] = f[3]*y[3] + f[4]*y[6] + f[5]*y[9];
-  g[4] = f[3]*y[4] + f[4]*y[7] + f[5]*y[10];
-  g[5] = f[3]*y[5] + f[4]*y[8] + f[5]*y[11];
-  g[6] = f[6]*y[3] + f[7]*y[6] + f[8]*y[9];
-  g[7] = f[6]*y[4] + f[7]*y[7] + f[8]*y[10];
-  g[8] = f[6]*y[5] + f[7]*y[8] + f[8]*y[11];
-  g[9] = f[9]*y[3] + f[10]*y[6] + f[11]*y[9];
-  g[10] = f[9]*y[4] + f[10]*y[7] + f[11]*y[10];
-  g[11] = f[9]*y[5] + f[10]*y[8] + f[11]*y[11];
+  g[3] = f[3] * y[3] + f[4] * y[6] + f[5] * y[9];
+  g[4] = f[3] * y[4] + f[4] * y[7] + f[5] * y[10];
+  g[5] = f[3] * y[5] + f[4] * y[8] + f[5] * y[11];
+  g[6] = f[6] * y[3] + f[7] * y[6] + f[8] * y[9];
+  g[7] = f[6] * y[4] + f[7] * y[7] + f[8] * y[10];
+  g[8] = f[6] * y[5] + f[7] * y[8] + f[8] * y[11];
+  g[9] = f[9] * y[3] + f[10] * y[6] + f[11] * y[9];
+  g[10] = f[9] * y[4] + f[10] * y[7] + f[11] * y[10];
+  g[11] = f[9] * y[5] + f[10] * y[8] + f[11] * y[11];
 
   return g;
 }
 
 void flowmap::initialize_expression(int number_of_threads) {
 
-  // one expression per threads
+  // one expression per threads to avoid race condition
   exp_u = new exprtk::expression<double>[number_of_threads];
   exp_v = new exprtk::expression<double>[number_of_threads];
   exp_w = new exprtk::expression<double>[number_of_threads];

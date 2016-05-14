@@ -22,6 +22,8 @@ data/*
 *.dat
 *.plt
 *.lay
+*.lpk
+*.vtk
 
 # Temp files
 *.cpp~

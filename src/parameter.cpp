@@ -1,11 +1,11 @@
 #include "parameter.h"
 
-parameter::parameter(const char *fichier) {
+parameter::parameter(const char *file) {
 
-  FILE *fp = fopen(fichier, "r");
+  FILE *fp = fopen(file, "r");
   if (fp == NULL) {
-    printf("Can't find parametric file %s. Look at the example for help.\n", fichier);
-    exit(0);
+    cerr << "Can't open config file " << file << ". Look at the example for help." << endl;
+    exit(-1);
   }
 
   char token[1000];

@@ -7,10 +7,10 @@ using namespace std;
 
 class parameter {
  public:
-  parameter(const char *fichier);
+  parameter(const char *file);
   double t() const { return t_; };
   double t0() const { return t0_; };
-  double tolerance() const {return tolerance_;};
+  double tolerance() const { return tolerance_; };
   double hmin() const { return hmin_; };
   double hmax() const { return hmax_; };
 
