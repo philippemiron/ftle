@@ -108,10 +108,11 @@ void flowmap::rk45(double t0, double tend, double tol, double hmin, double hmax,
   x[10] = 0.0;
   x[11] = 1.0;
   double t(t0);
-  double h(1e-2 * copysign(1.0, tend - t0)); // initial time step
+  double h(1.0e-02 * copysign(1.0, tend - t0)); // initial time step
   vector<double> K1, K2, K3, K4, K5, K6, K7;
   vector<double> x1(x.size()), x2(x.size()), x3(x.size()), x4(x.size()), x5(x.size()), x6(x.size());
   vector<double> error(x.size(), 0.0);
+  double delta(1.0), err(1.0), error_max(1.0);
 
   for (size_t i(0); i < maxiter; i++) {
     K1 = velocity(t, x);
@@ -140,30 +141,24 @@ void flowmap::rk45(double t0, double tend, double tol, double hmin, double hmax,
 
     K7 = velocity(t + h, x6);
     for (size_t j(0); j < x.size(); j++)
-      error[j] =
-          abs((b1 - b1p) * K1[j] + (b3 - b3p) * K3[j] + (b4 - b4p) * K4[j] + (b5 - b5p) * K5[j] +
-              (b6 - b6p) * K6[j]
-                  + (-b7p) * K7[j]);
+      error[j] = h * (e1 * K1[j] + e3 * K3[j] + e4 * K4[j] + e5 * K5[j] + e6 * K6[j] + e7 * K7[j]);
 
-    // error control on trajectory
-    double maxerror = max(error[0], max(error[1], error[2]));
-    if (maxerror < tol) {
+    // error control
+    err = norm(error);
+    error_max = max(tol, tol * norm(x));
+    if (err < error_max) {
       // accept time step
       t += h;
-      for (size_t j(0); j < x.size(); j++)
-        x[j] += h * (b1 * K1[j] + b3 * K3[j] + b4 * K4[j] + b5 * K5[j] + b6 * K6[j]);
+      x = x6;
     }
 
-    // limit step variation
-    double delta = 0.9 * pow(tol / maxerror, 1.0 / 5.0);
-    if (delta <= 0.1) {
-      h *= 0.1;
-    } else if (delta >= 5.0) {
-      h *= 5.0;
-    } else {
-      h *= delta;
-      h = min(abs(h), hmax) * copysign(1.0, h);
+    // step variation
+    if (err > 0) {
+      delta = 0.9 * pow(error_max / err, 0.2);
+      delta = min(max(delta, 0.1), 5.0);
     }
+    h *= delta;
+    h = min(fabs(h), hmax) * copysign(1.0, h);
 
     // adjust last step
     if (t == tend) {

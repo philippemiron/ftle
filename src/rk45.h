@@ -1,7 +1,3 @@
-//
-// Created by phmir on 16-05-06.
-//
-
 #ifndef LCS_RK45_H
 #define LCS_RK45_H
 
@@ -36,20 +32,29 @@ const double c5 = 8.0 / 9.0;
 //const double c6 = 1.0;
 //const double c7 = 1.0;
 
-const double b1 = 35.0 / 384.0;
+// bi = a7i
+//const double b1 = 35.0 / 384.0;
 //const double b2 = 0.0;
-const double b3 = 500.0 / 1113.0;
-const double b4 = 125.0 / 192.0;
-const double b5 = -2187.0 / 6784.0;
-const double b6 = 11.0 / 84.0;
+//const double b3 = 500.0 / 1113.0;
+//const double b4 = 125.0 / 192.0;
+//const double b5 = -2187.0 / 6784.0;
+//const double b6 = 11.0 / 84.0;
 //const double b7 = 0.0
 
-const double b1p = 5179.0 / 57600.0;
+//const double b1p = 5179.0 / 57600.0;
 //const double b2p = 0.0
-const double b3p = 7571.0 / 16695.0;
-const double b4p = 393.0 / 640.0;
-const double b5p = -92097.0 / 339200.0;
-const double b6p = 187.0 / 2100.0;
-const double b7p = 1.0 / 40.0;
+//const double b3p = 7571.0 / 16695.0;
+//const double b4p = 393.0 / 640.0;
+//const double b5p = -92097.0 / 339200.0;
+//const double b6p = 187.0 / 2100.0;
+//const double b7p = 1.0 / 40.0;
+
+// ei = bi - bip
+const double e1=71.0/57600.0;
+const double e3=-71.0/16695.0;
+const double e4=71.0/1920.0;
+const double e5=-17253.0/339200.0;
+const double e6=22.0/525.0;
+const double e7=-1.0/40.0;
 
 #endif //LCS_RK45_H

@@ -5,12 +5,9 @@ tolerance 1e-06
 hmin    1e-05
 hmax    1.0
 
-#_parameter_
-MthOde  Euler
-
 #_Dimensions_
-nx      500
-ny      100
+nx      400
+ny      200
 nz      3
 xmin    0.0  
 xmax    2.0
