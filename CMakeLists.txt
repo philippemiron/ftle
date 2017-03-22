@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 project(ftle)
 
+set(CMAKE_CXX_COMPILER "/usr/local/bin/g++-6")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -lblas -llapack -fopenmp -std=c++11")
 
 include_directories(include)

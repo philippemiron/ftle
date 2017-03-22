@@ -32,6 +32,8 @@ Makefile~
 
 # Netbeans/Clion project
 nbproject/*
+cmake-build-debug/*
+cmake-build-release/*
 .idea/*
 
 # temp files
