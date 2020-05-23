@@ -19,9 +19,9 @@ along with this program.  If not, see http://www.gnu.org/licenses
 Finite time Lyapunov exponent (FTLE) from analytical velocity field
 
 -  velocity field expression parsing (string in config file)
-	- done using the beautiful tool exprtk, more info here https://code.google.com/p/exprtk/
+	- using the beautiful tool exprtk https://code.google.com/p/exprtk/
 
-- the method is explain in multiple article from  G. Haller, F. Lekien. and S.C. Shadden.
+- the method is explained in multiple papers from  G. Haller, F. Lekien. and S.C. Shadden.
 	- http://en.wikipedia.org/wiki/Lyapunov_exponent
 	- http://mmae.iit.edu/shadden/LCS-tutorial/FTLE-derivation.html
 
